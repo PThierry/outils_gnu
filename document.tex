@@ -1,0 +1,241 @@
+%%
+%%
+%% document.tex for doctorat
+%%
+%% Made by Philippe THIERRY
+%% Login   <Philippe THIERRYreseau-libre.net>
+%%
+%% Started on  mar. 24 nov. 2009 19:46:57 CET Philippe THIERRY
+%% Last update Wed Sep  1 19:26:12 2010 Philippe THIERRY
+%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Document style definition
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[twoside,a4paper,11pt,titlepage]{book} 	% document type
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Packages integration
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[hundred]{vrsion}				% versioning support
+\usepackage[latin1]{inputenc}				% char format
+\usepackage{listings}					% lists support. Used for code
+\usepackage[usenames,dvipsnames]{color}					% basic color support
+\usepackage[T1]{fontenc} 				% caracteres norme iso-8859.
+			 				% risque de ne pas marcher avec les fichiers crees
+                         				% sous windows.
+\usepackage[english,francais]{babel}			% french support
+\usepackage{amsfonts}					% special fonts support (math, etc)
+\usepackage{amsmath}
+\usepackage{amssymb}					% special symbols support
+\usepackage{graphicx}					% graphics integration support
+\usepackage{fancyhdr}					% beautiful headers support
+\usepackage{lastpage}					% \lastpage support
+\usepackage{textcomp}					%
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{calc}					% counter support
+\usepackage{datetime}					% personnalize dates
+\usepackage{tabularx}					% tabular with more conf
+\usepackage{array}					% tabular replacement
+\usepackage{chngpage}					% change page layout localy
+\usepackage{minitoc}
+%
+\usepackage{makeidx}
+\usepackage[pdftex,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue
+           ]{hyperref}					% allow interal links
+           						% and doc content list 
+\usepackage[all]{hypcap}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{times}
+\usepackage{ifpdf}
+\usepackage{appendix} 
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{alltt}
+\usepackage[sectionbib]{natbib}
+\usepackage{chapterbib}
+
+\usepackage[Glenn]{fncychap}				% 'Glenn' chapter titles
+
+% charts support
+\usepackage{pdftricks}
+\begin{psinputs}
+  \usepackage{pstricks}
+  \usepackage{multido}
+  \usepackage{epsfig}
+  \usepackage{pst-grad} % For gradients
+  \usepackage{pst-plot} % For axes
+\end{psinputs}
+
+%\usepackage{draftcopy}				% mark doc as 'draft'
+%\draftcopyName{Provisoire}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Watermark for draft versions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\draftmode}{y}
+
+\ifthenelse{\equal{\draftmode}{y}}{
+  \usepackage{graphics,color} %
+  \usepackage{eso-pic} % Required for Draft (\AddToShipoutPicture)
+  \AddToShipoutPicture{\resizebox{0.7\pdfpagewidth}{0.7\pdfpageheight}%
+  {\rotatebox{60}{\color[gray]{0.8}\hspace*{2.5cm}ÉBAUCHE}}}
+}{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Macro definition
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%% Avoiding page orphalin %%%%
+%%%% debut macro %%%%
+\widowpenalty=10000
+\clubpenalty=10000
+\raggedbottom
+%%%% fin macro %%%%
+
+%%%% debut macro %%%%
+\newenvironment{changemargin}[2]{\begin{list}{}{%	%
+\addtolength{\leftmargin}{#1}%				% Support for local margin
+\addtolength{\rightmargin}{#2}%				% update.
+}\item }{\end{list}}					%
+%%%% fin macro %%%%
+
+% index support
+\makeindex						% call for index generation
+
+
+%\input{macros/myminitoc.sty}
+
+
+% Add glossary
+\input{glossary.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Code insertion support, using listing
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% add code support
+\definecolor{colKeys}{rgb}{0,0,1}			%
+\definecolor{colIdentifier}{rgb}{0,0,0}			% Support for code coloration
+\definecolor{colComments}{rgb}{0,0.5,1}			% Specify some colors
+\definecolor{colString}{rgb}{0.6,0.1,0.1}		%
+
+\lstset{%						% configuration of listings 
+ float=hbp,% 						%
+ basicstyle=\ttfamily\small, % 				% For code integration
+ identifierstyle=\color{colIdentifier}, % 		% Use the above codekeys
+ keywordstyle=\color{colKeys}, % 			% 
+ stringstyle=\color{colString}, % 			%
+ commentstyle=\color{colComments}, % 			%
+ columns=flexible, % 					%
+ tabsize=2, % 						%
+ frame=trBL, % 						%
+ frameround=tttt, % 					%
+ extendedchars=true, % 					%
+ showspaces=false, % 					%
+ showstringspaces=false, % 				%
+ numbers=left, % 					%
+ numberstyle=\tiny, % 					%
+ breaklines=true, % 					%
+ breakautoindent=true, % 				%
+ captionpos=b,% 					%
+ xrightmargin=0.5cm, % 					%
+     xleftmargin=0.5cm 					%
+    } 							%
+
+
+\input{titlepage.tex}
+
+% Set chaptername lowercase
+\ChNameLowerCase
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Headers and footers configuration
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{fancy}					% specify page style
+\pagenumbering{roman}					% specify page numbering
+\fancyhf{}						% clear previous headers
+%\addtolength{\headheight}{48pt}				% update header height
+
+
+%opening
+\begin{document}
+
+\selectlanguage{francais}
+
+\dominitoc
+\dominilot
+\dominilof
+
+\renewcommand{\headrulewidth}{0pt}			% disactive header bar
+
+
+\fancyhead{}
+\fancyfoot{}
+\thesisTitle						% print title page
+\fancyfoot[RO]{\thepage/\pageref{LastPage}}		% Right Odd foot
+\fancyfoot[RE]{}					% Right Even foot
+\fancyfoot[LE]{\thepage/\pageref{LastPage}}		% Left Even foot
+\fancyfoot[LO]{}					% Left Odd foot
+
+\cleardoublepage					% double blank page
+\frontmatter						% out of TOC chapterss
+
+\input{includes/\lang/resume.tex}				% insert abstracts
+
+\mainmatter						% starting TOC chapters
+
+\cleardoublepage					% double blank page
+%\dominitoc
+\tableofcontents					% print table of contents
+\listoffigures
+\listoftables
+\pagenumbering{arabic}					% update page number to arabic
+
+\renewcommand{\headrulewidth}{1pt}			% allow header bar
+\fancyhead[LO]{\leftmark}				% Left Odd header
+\fancyhead[RE]{}					% Right Even header
+\fancyhead[RO]{}					% Right Odd header
+\fancyhead[LE]{\rightmark}				% Left Even header
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Subfiles inclusion
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Seems to have a bug due to frontmatter/backmatter and the setcounter of
+% chapter. To be fixed in the future.
+%
+
+
+\input{introduction.tex}
+
+
+\input{compilation.tex}
+\input{makefiles.tex}
+\input{les_outils_de_conf.tex}
+\input{tests_profiling.tex}
+
+\backmatter
+
+\printglossary
+
+% bibliography
+\nocite{*}
+\bibliography{bibliography}
+\bibliographystyle{plain}
+
+\printindex
+
+\end{document}

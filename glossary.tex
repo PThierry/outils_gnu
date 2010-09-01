@@ -1,0 +1,37 @@
+%%
+%%
+%% glossary.tex for thesis in /doctorat/these/tex
+%%
+%% Made by Philippe THIERRY
+%% Login   <Philippe THIERRYreseau-libre.net>
+%%
+%% Started on  Tue Mar 16 16:23:32 2010 Philippe THIERRY
+%% Last update Thu Jul 22 12:53:22 2010 Philippe THIERRY
+%%
+
+\usepackage[style=long,border=none,header=plain,cols=3,toc,number=section]{glossary}
+\makeglossary
+
+\storeglosentry{ip}{name=IP,description={Internet Protocol}}
+\storeglosentry{atm}{name=ATM,description={Protocole de commutation de circuit, recouvrant les couches liaison, réseau et transport.}}
+\storeglosentry{x25}{name=X25,description={\FIXME}}
+
+\storeglosentry{8021q}{name={802.1q},description={\FIXME}}
+\storeglosentry{diffserv}{name={DiffServ},description={Champs de l'en-tête IP permettant de définir une différenciation de service en fonction de sa valeur}}
+\storeglosentry{qos}{name={QoS},description={{\it Quality Of Service}, ensemble de moyens informatique permettant de fournir une meilleure garantie pour le transport d'un flux.}}
+
+\storeglosentry{wcet}{name=WCET,description={{\it Worst Case Execution Time}, temps maximum
+nécessaire à l'exécution d'une tache donnée}}
+\storeglosentry{switch}{name=switch, description={matériel réseau faisant une
+décapsulation niveau liaison des paquets qu'il reçoit, afin de les rerouter sur la bonne
+interface, grâce à une capacité de mémorisation de la position des n{\oe}uds lui étant connectés}}
+
+\storeglosentry{rfc}{name={RFC},description={{\it Request For Comments}}}
+
+\storeglosentry{mmu}{name=MMU,description={{\it Memory Management Unit}, Unité matérielle intégrée au processeur, permettant de fournir une capacité
+d'adressage logique de la mémoire, ainsi qu'un certain nombre de protections en terme de gestion d'accès.}}
+\storeglosentry{iommu}{name=I/OMMU,description={{\it In/Out Memory Management Unit}, Unité matérielle intégrée au processeur, permettant de contrôler
+les accès des éléments matériel (hors CPU) à la mémoire}}
+
+\storeglosentry{taskset}{name={Taskset},description={Ensemble de taches. Définit une liste exhaustive de taches temps réel, avec un certain nombre de propriété comme la période d'instanciation, le WCET ou la {\it deadline}}}
+\storeglosentry{wcep}{name={WCEP}, description={Pour une tache donnée, définit le chemin d'exécution le plus long}}
