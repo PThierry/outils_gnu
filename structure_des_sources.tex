@@ -1,0 +1,122 @@
+%%
+%%
+%% structure_des_sources.tex for  in /home/phil/Travail/ECE/cours/outils_gnu
+%%
+%% Made by Philippe THIERRY
+%% Login   <Philippe THIERRYreseau-libre.net>
+%%
+%% Started on  mer. 01 sept. 2010 20:29:25 CEST Philippe THIERRY
+%% Last update mer. 01 sept. 2010 21:01:17 CEST Philippe THIERRY
+%%
+
+\chapter{Structure des sources}
+
+{\it Ce chapitre décrit comment est décomposé le répertoire source d'un logiciel, et quels sont les fichiers
+importants.}
+
+\section{Le contenu du répertoire}
+
+\paragraph{}
+L'architecture des sources d'un logiciel est souvent complexe, et on y retrouve un grand nombre
+de fichiers. La plupart du temps, les logiciels open-source sont fait avec le couple Makefile/autotools.
+Ces deux outils de production sont décrit tout au long de ce document.
+
+\paragraph{}
+Lorsque l'on télécharge les sources d'un logiciel, que ce soit via un utilitaire de gestion de
+configuration (subversion, git, mercurial...) ou directement sous forme d'une archive tar, on
+retrouve en général un contenu assez similaire à l'arborescence ci-dessous:
+
+\begin{lstlisting}
+[d] doc
+[d] src
+[d] test
+ f  Makefile.am
+ f  Makefile.in
+ f  Makefile
+ f  ChangeLog
+ f  README
+ f  TODO
+ f  Authors
+ f  *configure
+ f  configure.ac
+ f  *config.sub
+ f  *config.guess
+ f  *depcomp
+ f  *bootstrap
+ f  *missing
+ f  *install-sh
+\end{lstlisting}
+
+\paragraph{}
+Cela fait un grand nombre de fichier pour un seul projet. Il s'agit cependant de l'ensemble des fichiers
+nécessaires à la production d'un projet standard compatible des outils GNU.
+
+\paragraph{}
+Tous les fichiers présents dans ce dossier ne méritent pas une explication, mais voici une revue détaillée des
+fichiers et dossiers principaux:
+
+\begin{table}
+\begin{tabular}{|l|l|}
+\hline
+{\it Nom du fichier} & {\it But} \\
+\hline\hline
+\textbf{\index{configure.ac}configure.ac} & 
+\begin{minipage}{0.8\linewidth}
+Ce fichier contient les spécifications pour la configuration des sources. Il permet de générer
+le script shell {\texttt configure}. Il sera décrit plus précisément dans le chapitre \ref{chap:autotools}.
+\end{minipage}
+\\
+\hline
+\textbf{\index{configure}configure} &
+\begin{minipage}{0.8\linewidth}
+Il s'agit d'un script shell, généré à partir du configure.ac. C'est la première commande à lancer
+pour pouvoir compiler le projet. Il génère entre autre les fichiers Makefile et fournit un header C, nommé
+config.h pouvant être utilisé par le logiciel lui-même.
+\end{minipage}\\
+\hline
+\textbf{\index{Makefile.am}Makefile.am} &
+\begin{minipage}{0.8\linewidth}
+Il s'agit du fichier Makefile "source" à partir duquel le fichier Makefile final est construit
+durant la phase de configuration.
+\end{minipage}
+\\
+\hline
+\textbf{\index{Makefile}Makefile} &
+\begin{minipage}{0.8\linewidth}
+Il s'agit du fichier qui est traité par la commande \index{make}{\texttt make}. Ce fichier contient les
+directives de compilation permettant la construction du binaire. Il est souvent, comme dans le cas présent,
+généré par la phase de configuration.
+\end{minipage}
+\\
+\hline
+\textbf{\index{bootstrap}bootstrap} &
+\begin{minipage}{0.8\linewidth}
+Appellé parfois \index{autogen.sh}{\texttt autogen.sh}. Il s'agit d'un script shell faisant appel à la commande
+autoreconf, reconstruisant le fichier {\texttt configure} à partir du fichier {\texttt configure.ac}.
+\end{minipage}
+\\
+\hline
+\textbf{doc} &
+\begin{minipage}{0.8\linewidth}
+Par convention, contient les documents associés au projet. Ces documents sont en général générés (fait
+en \LaTeX, ou encore construit à partir de commentaire Doxygen).
+\end{minipage}
+\\
+\hline
+\textbf{src} &
+\begin{minipage}{0.8\linewidth}
+Par convention, contient les fichiers sources du projet.
+\end{minipage}
+\\
+\hline
+\textbf{test} &
+\begin{minipage}{0.8\linewidth}
+Par convention, contient le système de test du projet. Il peux s'agir de scripts, de petit binaires de
+test, ou divers moyens de valider le comportement du binaire produit à partir des sources de src.
+\end{minipage}
+\\
+\hline
+\hline
+\end{tabular}
+\caption{Récapitulatif de l'architecture des sources d'un projet}
+\end{table}

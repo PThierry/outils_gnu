@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:18 2010 Philippe THIERRY
-%% Last update Wed Sep  1 18:14:19 2010 Philippe THIERRY
+%% Last update mer. 01 sept. 2010 21:37:23 CEST Philippe THIERRY
 %%
 
 \chapter{La chaîne de compilation}
@@ -15,9 +15,81 @@
 
 \section{Principe de fonctionnement}
 
+\paragraph{}
+Construire un binaire n'est pas une opération simple. Il suffit de regarder le temps qu'il a fallut pour passer de
+machines dont la programmation se faisait en assembleur à des langages évolués comme les langages objets
+d'aujourd'hui.
+
+\paragraph{}
+La construction d'un binaire se fait en plusieurs étapes bien distinctes :
+\begin{enumerate}
+\item Traiter les éléments de préprocessing.\\Il s'agit, dans les langages comme le C ou le C++, de substituer les
+appels au macros (déclaré au travers de l'instruction de preprocessing \texttt{\#define}) par le contenu de la macro.\\
+Il en va de même pour l'inclusion des header, en prenant en compte des problématiques de redondance d'inclusion.
+\item Construire les fichiers objets.\\Un fichier objet est créé par source. Dans ce fichier sont déclaré les
+différents symboles utilisés et définit dans le fichier source associé. On y retrouve ainsi la liste des fonctions
+implémentées et celles qui sont utilisées et non encore définies (comme celles implémentées dans un autre fichier source
+et accessible via un header). Il en va de même pour les variables globale, les structures de données, les classe, etc.
+\item La construction des bibliothèques.\\Il s'agit de regrouper certains fichiers objet en un élément homogène : une
+bibliothèque. Il en ressort un fichier avec l'extension {\texttt .a}, contenant l'ensemble des symboles des fichiers
+objet utilisés pour construire la bibliothèque. Cette étapes n'est pas toujours présente mais est assez fréquente.
+\item Le linkage.\\Une fois les fichiers objet et les bibliothèques construire, il s'agit d'en faire un tout cohérent.
+On construit alors une table définissant les différentes sections du binaire (partie code, partie data, rodata, etc),
+on résout les symboles inconnus venant des bibliothèques tierces comme la libc, et on construit les métadonnées du
+binaire (format ELF32 sur un Linux 32bits, ELF64 sur un linux 64 bits). Ces métadonnées seront utilisées par le noyau
+lors de la création du processus, pour déployer en mémoire les différents élements du binaire, et pour pouvoir
+amorcer sont exécution.
+\end{enumerate}
+
+\paragraph{}
+Ce chapitre revient plus en profondeur sur chacune des étapes de la production d'un binaire, afin de mieux
+appréhender à la fois la manière dont se construit un binaire, mais aussi pour appendre à détecter à quelle étape de
+la construction une erreur survient.
+
 \section{Séquencement de la construction d'un binaire}
 
+\lstset{language=C,basicstyle=\small,keywordstyle=\color{black}\bfseries,commentstyle=\color{red}\textit,stringstyle=\color{OliveGreen}\ttfamily}
+
 \subsection{Le preprocessing}
+\label{preproc}
+
+\paragraph{}
+Comme précisé au dessus, l'étapes de préprocessing prend en compte toutes les commandes de préprocessing appellées
+dans les sources. Ces dernières commencent toutes par un \texttt{\#}. Il s'agit de :
+\begin{lstlisting}[name=commandes de preprocessing, label=cpp_cmds]
+#ifndef
+#define
+#endif
+#include
+#pragma
+...
+\end{lstlisting}
+
+\paragraph{}
+Soit le fichier source C suivant :
+\begin{lstlisting}[name=Premier example de code, label=code_cpp]
+#include <stdio.h>
+
+#define VALUE	12
+
+int foo(char	*bar);
+
+int foo(char	*bar)
+{
+  bar += VALUE;
+  return 0;
+}
+\end{lstlisting}
+
+\paragraph{}
+Une fois le traitement du préprocesseur effectué, l'ensemble des lignes de preprocessing sont remplacé par le code
+qui est derrière, et ce de manière récursive. Ainsi, on remplace l'appel à stdio.h par son contenu, et dans le
+contenu du header lui-même, les lignes de preprocessing sont également remplacées, et ce jusqu'à ce qu'il n'en
+subsiste aucune.
+
+\paragraph{}
+Vu la taille du fichier résultant du traitement du préprocessing, ce d dernier est mis en annexe. On constate qu'il
+s'agit cependant toujours d'un fichier source C, parfaitement lisible. A ce stade, aucune compilation n'est encore effectuée.
 
 \subsection{La construction de fichiers objets: principe de la compilation séparée}
 
