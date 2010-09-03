@@ -6,44 +6,44 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:18 2010 Philippe THIERRY
-%% Last update mer. 01 sept. 2010 21:37:23 CEST Philippe THIERRY
+%% Last update jeu. 02 sept. 2010 22:40:20 CEST Philippe THIERRY
 %%
 
 \chapter{La chaîne de compilation}
 
-{\it Il n'est traité ici que des spécificités de la chaîne de compilation GNU (gcc)}
+{\it   Il   n'est   traité   ici   que   des   spécificités   de    la    chaîne    de    compilation    GNU    (gcc)}
 
 \section{Principe de fonctionnement}
 
 \paragraph{}
-Construire un binaire n'est pas une opération simple. Il suffit de regarder le temps qu'il a fallut pour passer de
-machines dont la programmation se faisait en assembleur à des langages évolués comme les langages objets
+Construire un binaire n'est pas une opération simple.  Il suffit de regarder le temps qu'il a fallut  pour  passer  de
+machines dont  la  programmation  se  faisait  en  assembleur  à  des  langages  évolués  comme  les  langages  objets
 d'aujourd'hui.
 
 \paragraph{}
 La construction d'un binaire se fait en plusieurs étapes bien distinctes :
 \begin{enumerate}
-\item Traiter les éléments de préprocessing.\\Il s'agit, dans les langages comme le C ou le C++, de substituer les
+\item Traiter les éléments de préprocessing.\\Il s'agit, dans les langages comme le C ou le  C++,  de  substituer  les
 appels au macros (déclaré au travers de l'instruction de preprocessing \texttt{\#define}) par le contenu de la macro.\\
-Il en va de même pour l'inclusion des header, en prenant en compte des problématiques de redondance d'inclusion.
-\item Construire les fichiers objets.\\Un fichier objet est créé par source. Dans ce fichier sont déclaré les
-différents symboles utilisés et définit dans le fichier source associé. On y retrouve ainsi la liste des fonctions
+Il en va de même pour l'inclusion des header, en prenant en  compte  des  problématiques  de  redondance  d'inclusion.
+\item Construire les fichiers objets.\\Un fichier objet est créé  par  source.   Dans  ce  fichier  sont  déclaré  les
+différents symboles utilisés et définit dans le fichier source associé.  On y retrouve ainsi la  liste  des  fonctions
 implémentées et celles qui sont utilisées et non encore définies (comme celles implémentées dans un autre fichier source
 et accessible via un header). Il en va de même pour les variables globale, les structures de données, les classe, etc.
-\item La construction des bibliothèques.\\Il s'agit de regrouper certains fichiers objet en un élément homogène : une
-bibliothèque. Il en ressort un fichier avec l'extension {\texttt .a}, contenant l'ensemble des symboles des fichiers
-objet utilisés pour construire la bibliothèque. Cette étapes n'est pas toujours présente mais est assez fréquente.
+\item La construction des bibliothèques.\\Il s'agit de regrouper certains fichiers objet en un élément homogène :  une
+bibliothèque.  Il en ressort un fichier avec l'extension {\texttt .a}, contenant l'ensemble des symboles des  fichiers
+objet utilisés pour construire la bibliothèque.  Cette étapes n'est pas toujours présente mais  est  assez  fréquente.
 \item Le linkage.\\Une fois les fichiers objet et les bibliothèques construire, il s'agit d'en faire un tout cohérent.
-On construit alors une table définissant les différentes sections du binaire (partie code, partie data, rodata, etc),
-on résout les symboles inconnus venant des bibliothèques tierces comme la libc, et on construit les métadonnées du
+On construit alors une table définissant les différentes sections du binaire (partie code, partie data, rodata,  etc),
+on résout les symboles inconnus venant des bibliothèques tierces comme la libc, et on  construit  les  métadonnées  du
 binaire (format ELF32 sur un Linux 32bits, ELF64 sur un linux 64 bits). Ces métadonnées seront utilisées par le noyau
-lors de la création du processus, pour déployer en mémoire les différents élements du binaire, et pour pouvoir
+lors de la création du processus, pour déployer en mémoire  les  différents  élements  du  binaire,  et  pour  pouvoir
 amorcer sont exécution.
 \end{enumerate}
 
 \paragraph{}
-Ce chapitre revient plus en profondeur sur chacune des étapes de la production d'un binaire, afin de mieux
-appréhender à la fois la manière dont se construit un binaire, mais aussi pour appendre à détecter à quelle étape de
+Ce chapitre revient plus en profondeur  sur  chacune  des  étapes  de  la  production  d'un  binaire,  afin  de  mieux
+appréhender à la fois la manière dont se construit un binaire, mais aussi pour appendre à détecter à quelle  étape  de
 la construction une erreur survient.
 
 \section{Séquencement de la construction d'un binaire}
@@ -54,8 +54,8 @@ la construction une erreur survient.
 \label{preproc}
 
 \paragraph{}
-Comme précisé au dessus, l'étapes de préprocessing prend en compte toutes les commandes de préprocessing appellées
-dans les sources. Ces dernières commencent toutes par un \texttt{\#}. Il s'agit de :
+Comme précisé au dessus, l'étapes de préprocessing prend en compte toutes les  commandes  de  préprocessing  appellées
+dans   les   sources.    Ces   dernières   commencent   toutes   par    un    \texttt{\#}.     Il    s'agit    de    :
 \begin{lstlisting}[name=commandes de preprocessing, label=cpp_cmds]
 #ifndef
 #define
@@ -70,11 +70,11 @@ Soit le fichier source C suivant :
 \begin{lstlisting}[name=Premier example de code, label=code_cpp]
 #include <stdio.h>
 
-#define VALUE	12
+#define VALUE   12
 
-int foo(char	*bar);
+int foo(char    *bar);
 
-int foo(char	*bar)
+int foo(char    *bar)
 {
   bar += VALUE;
   return 0;
@@ -82,23 +82,369 @@ int foo(char	*bar)
 \end{lstlisting}
 
 \paragraph{}
-Une fois le traitement du préprocesseur effectué, l'ensemble des lignes de preprocessing sont remplacé par le code
-qui est derrière, et ce de manière récursive. Ainsi, on remplace l'appel à stdio.h par son contenu, et dans le
-contenu du header lui-même, les lignes de preprocessing sont également remplacées, et ce jusqu'à ce qu'il n'en
+Une fois le traitement du préprocesseur effectué, l'ensemble des lignes de preprocessing sont  remplacé  par  le  code
+qui est derrière, et ce de manière récursive.  Ainsi, on remplace l'appel à  stdio.h  par  son  contenu,  et  dans  le
+contenu du header lui-même, les lignes de preprocessing sont  également  remplacées,  et  ce  jusqu'à  ce  qu'il  n'en
 subsiste aucune.
 
 \paragraph{}
-Vu la taille du fichier résultant du traitement du préprocessing, ce d dernier est mis en annexe. On constate qu'il
+Vu la taille du fichier résultant du traitement du préprocessing, ce d dernier est mis en annexe.  On  constate  qu'il
 s'agit cependant toujours d'un fichier source C, parfaitement lisible. A ce stade, aucune compilation n'est encore effectuée.
 
 \subsection{La construction de fichiers objets: principe de la compilation séparée}
 
+\paragraph{}
+Une fois le traitement effectué par le préprocesseur, il faut passer à l'étape de compilation proprement dite. Il
+s'agit, à partir des fichiers de sortie du preprocesseur, de générer des fichier binaire. Un fichier binaire est créé
+pour chaque fichier source, avec comme seule différence dans le nom l'extention du fichier, que devient {\texttt
+.o}\footnote{o pour objet}.
+
+\paragraph{}
+Les fichiers objets contienne directement du code binaire. Si un passage par le code assembleur devait être effectué,
+il aurait lieu pendant la construction du fichier objet, comme une étape intermédiaire.
+
+\paragraph{}
+Comme vu précédement, un fichier objet contient des symboles non résolus. Il s'agit par exemple d'appel à des
+fonctions extérieures (implémenté dans d'autres fichiers sources, dans des bibliothèques tierces) ou à des variables
+globales externes. Dans la table des symboles associée au fichier, on retrouve donc à la fois des symboles dits {\it
+résolus}, possédant une adresse, et {\it non résolus}, en attente d'une adresse.
+
+\paragraph{}
+Dans certains cas, on regroupe plusieurs fichiers objets en une {\it bibliothèque}. Les différentes tables des
+symboles sont alors regroupées en une seule, fournissant les mêmes informations.
+
+\paragraph{}
+Voici un extrait de la table des symboles de la glibc:
+
+\begin{lstlisting}[name=Extrait de la table des symboles de la glibc, label=libc_symb]
+sh$ nm -r /usr/lib/libc.a
+...
+dl-runtime.o:
+0000000000000010 T _dl_profile_fixup
+                 U _dl_mcount
+                 U _dl_lookup_symbol_x
+0000000000000200 T _dl_fixup
+0000000000000000 T _dl_call_pltexit
+                 U _dl_bind_not
+                 U __assert_fail
+0000000000000000 r __PRETTY_FUNCTION__.12248
+0000000000000014 r __PRETTY_FUNCTION__.12084
+
+dl-error.o:
+                 U strlen
+0000000000000000 b receiver
+                 U mempcpy
+                 U memcpy
+                 U malloc
+                 U _exit
+0000000000000170 T _dl_signal_error
+00000000000002f0 T _dl_signal_cerror
+0000000000000000 T _dl_receive_error
+000000000000006d r _dl_out_of_memory
+                 U _dl_error_catch_tsd
+                 U _dl_dprintf
+                 U _dl_debug_printf
+                 U _dl_debug_mask
+0000000000000080 T _dl_catch_error
+                 U _dl_argv
+                 U __strerror_r
+                 U __sigsetjmp
+                 U __longjmp
+
+dl-init.o:
+                 U _dl_initfirst
+0000000000000000 T _dl_init
+                 U _dl_debug_printf
+                 U _dl_debug_mask
+                 U _dl_argv
+
+dl-fini.o:
+                 U memmove
+0000000000000000 T _dl_sort_fini
+                 U _dl_ns
+                 U _dl_nns
+                 U _dl_load_lock
+00000000000002a0 T _dl_fini
+                 U _dl_debug_printf
+                 U _dl_debug_mask
+                 U _dl_argv
+                 w __pthread_mutex_unlock
+                 w __pthread_mutex_lock
+                 U __assert_fail
+0000000000000052 r __PRETTY_FUNCTION__.11135
+000000000000005b r __PRETTY_FUNCTION__.11048
+\end{lstlisting}
+
+\paragraph{}
+Cette table montre bien la décomposition de la libc en fichiers objets distincts, fournissant chacun des symboles
+implémentés (cas des symboles marqué {\it t} ou {\it T}, ou non-définit (cas des symboles marqués U.
+
+\paragraph{}
+Du fait qu'il ne s'agit ici que de la concaténation de la table des symboles de chaque fichier objet, on retrouve,
+pour un symbole donné plusieures occurences dont au maximum une seule marquée {\it T}.
+
+\paragraph{}
+Ainsi en cherchant le symbole {\texttt strlen} dans la libc, on retrouve une sortie ressemblant à la liste ci-dessous:
+
+\begin{lstlisting}
+sh$ nm -r /usr/lib/libc.a | grep strlen
+                 U strlen
+                 U strlen
+                 U strlen
+                 U strlen
+                 U strlen
+...
+                 U strlen
+                 U strlen
+0000000000000000 T strlen                                                                                                                                                                                       
+                 U strlen
+                 U strlen
+                 U strlen
+...
+                 U strlen
+                 U strlen
+                 U strlen
+                 U strlen
+                 U strlen
+                 U strlen
+sh$
+\end{lstlisting}
+
+\paragraph{}
+Les adresses indiquée dans la table des symboles sont des marqueurs d'offset dans la section de code du fichier
+objet.\\
+Il s'agit d'adresse relative au début de la section code. Lors de la construction du binaire, puis lors de
+l'exécution, ces adresses seront modifiées pour pointer au bon endroit.
+
 \subsection{Construction du binaire: linker et définition des sections}
 
-\section{Principe du linkage et de l'emploi des bibliothèques tierces}
+\paragraph{}
+Une fois les fichiers objets tous créés, il faut créer le binaire. Un binaire, tout comme un fichier objet, contient
+un certain nombre de données d'information sur sa structure qui lui sont associées. Ces données sont intégrées dans
+le fichier binaire. La manière dont sont structurées ces données et positionnées les différents élements du binaire
+(les différentes section, cf plus loin) définissent le format du binaire.
+
+\paragraph{}
+Sous Linux et dans les systèmes Unix (Unix System V), on parle de format ELF\footnote{Executable and Linkable
+Format}. L'image \ref{fig:elf} décrit la structure du binaire et ses différentes sections.
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=6cm]{pictures/elf_layout}
+\end{center}
+\label{fig:elf}
+\caption{Architecture d'un binaire ELF}
+\end{figure}
+
+\paragraph{}
+Parmis les différentes sections, on retrouve:
+\begin{itemize}
+\item La section {\texttt .text}, contenant le code executable
+\item La section {\texttt .data}, contenant les données accessibles en écriture. Il peut s'agir de variables globales
+par exemple.
+\item La section {\texttt .ro-data}, contenant les données accessibles en lecture seule. Il s'agit entre autre des
+chaîne de caractères {\it brutes}, comme la variable suivante :\\
+\begin{lstlisting}
+char	ma_version="version 1.0.2rc3";
+\end{lstlisting}
+\end{itemize}
+
+\paragraph{}
+Les sections qui ne figurent pas dans un binaires sont les sections {\it dynamiques}. Il s'agit du tas (heap) et de
+la pile (stack). En effet, ces section n'ont de sens que durant l'exécution du binaire, car sont construite au
+travers de l'exécution du code. Ces sections sont le propre d'un processus.
+
+\paragraph{}
+Lors du linkage, on ne retrouve plus qu'une seule section de code (section .text). Elle regroupe l'ensemble des
+sections de code des fichiers objet. Du fait du regroupement, les offset des différents symboles définis dans les
+fichiers objets change en fonction de leur position dans la nouvelle section .text. Il s'agit de la première
+translation des adresses des symboles. La seconde s'effectue durant l'exécution du processus associé au binaire, en
+fonction de son positionnement dans l'espace mémoire virtuel.
+
+\section{Qu'en est-il de l'emploi des bibliothèques tierces ?}
+
+\paragraph{}
+Lors de l'implémentation d'un logiciel, on fait souvent appel à des bibliothèques tierces. La première, dans le cas
+du C, est la bibliothèque GNU Libc. En C++ il s'agit de la libstdC++ et régulièrement de boost. Il existe de
+nombreuses autres bibliothèques, spécialisées chacune dans un domaine, comme la libxml, la libgtk ou encore la
+libdvdread.
+
+\paragraph{}
+Il y a deux manières de prendre en compte les bibliothèques lors de la construction d'un binaire:
+\begin{enumerate}
+\item On intègre le code de la bibliothèque dans le binaire. Dans ce cas, les symboles de la bibliothèques sont
+intégrés comme autant de nouveau symboles dans la table des symboles du binaire. Le code des fonctions de la
+bibliothèques est intégré quant à lui dans la section {\texttt .text} du binaire.\\
+Il faut prendre note tout de fois que le linker, loin d'être bête, n'ajoute que le code de la bibliothèque nécessaire
+à l'exécution du binaire. Les symboles n'étant pas appellés directement ou indirectement dans le binaire ne sont pas
+intégrés. Cela a un impact lors de la gestion des options de linkage durant la phase de compilation. Il s'agit d'une
+des erreurs communément faites si l'on n'y prête pas garde.
+\item On maintient les symboles comme étant non résolus, et c'est le noyau, lors de la création du processus, qui va
+mapper en mémoire la bibliothèque. L'intérêt principale et de partager les ressources entre les divers processus.
+En effet, en considérant le cas de la libc, des centaines de processus s'en servent. Plutôt que chacun emporte une
+copie du code en son sein, ce dernier n'est présent qu'une fois en mémoire, et est partagé entre les différents
+processus.\\
+Le premier processus à s'en servir mappe réellement la bibliothèque en mémoire, et les autres processus, par un jeu
+de mappage multiple des pages de code de la bibliothèque (au travers de la MMU) accèdent au final à la même adresse
+physique.
+\end{enumerate}
 
 \section{Les options de la chaîne de compilation}
 
+\paragraph{}
+Au travers de la commande {\texttt gcc} sont exécutés à la fois le préprocesseur (cpp), le compilateur (gcc) et le
+linker (ld). En conséquence, on fournit à gcc à la fois des options pour le preprocessing, pour la compilation et
+pour le linkage.
+
+\paragraph{}
+Dans le cadre de ce document, le but est de décrire les principales options et à quoi elles servent. Le manuel de gcc
+décrit très bien les options par famille et par type. Il ne faut pas hésiter à s'appuyer dessus. Lorsque l'on cherche
+plus particulièrement les option de preprocessing ou de linkage, il vaut alors mieux s'appuyer sur le manuel
+respectivement de cpp et de ld.
+
+\paragraph{}
+Tout d'abord, les options de preprocessing sont peu nombreuses et les connaître n'est pas une obligation. Sont
+décrites ici majoritairement les options de compilation, puis de linkage.
+
 \subsection{Les options de compilation}
 
-\subsection{Les options de linkage}
+\paragraph{}
+Le tableau \ref{tab:gcc_flags} décrit les option du compilateur GNU gcc.
+
+\begin{table}
+\begin{tabular}{|l|l|}
+\hline
+Option & Signification \\
+{\textbf{-c}} &
+	\begin{minipage}{0.7\linewidth}
+        Gcc génère un fichier objet. Seule l'étape de compilation, et au besoin de preprocessing sont exécutées.
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+{\textbf{-s}} &
+	\begin{minipage}{0.7\linewidth}
+        Gcc génère un fichier assembleur. Selon les options d'optimisation, le compilateur peux générer un code
+        assembleur peu représentatif du code du langage de haut niveau. C'est là qu'on se rend compte de la
+        complexité des élements de parsing et d'optimisation du code.
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+{\textbf{-o}} &
+	\begin{minipage}{0.7\linewidth}
+        Spécifie le nom du fichier de sortie du traitement à effectué. Ainsi si l'option -c est donnée le fichier de
+        sortie est le fichier objet.
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+{\textbf{-W}} &
+	\begin{minipage}{0.7\linewidth}
+        Cette option demande au compilateur d'afficher les warnings les plus fréquent. Cette option ne fait
+        qu'afficher à l'erreur l'élément de programmation hasardeux dans les cas les plus graves.
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+{\textbf{-Wall}} &
+	\begin{minipage}{0.7\linewidth}
+        Idem à {\texttt -W}, mais prend en compte plus de Warnings. Il regrouple un sous ensemble des différents
+        warning géré par gcc (confer le manual de gcc, partie {\it Warning Options}.
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+{\textbf{-Werror}} &
+	\begin{minipage}{0.7\linewidth}
+        Demande au compilateur de s'arrêter la compilation au premier warning décelé. Cette option est
+        malheureusement rarement utilisée
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+{\textbf{-ansi}} &
+	\begin{minipage}{0.7\linewidth}
+        Le compilateur vérifie la conformité du code au langage C ANSI. Dans le cas contrère, il renvoie un Warning.
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+{\textbf{-Wextra}} &
+	\begin{minipage}{0.7\linewidth}
+        Vérifie un maximum de fragilités dans le code. Ce drapeau intègre la quasi-totalité des warnings supportés
+        par gcc (pas tous !).
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+{\textbf{-Wwrite-strings}} &
+	\begin{minipage}{0.7\linewidth}
+        Le compilateur vérifie qu'à aucun moment il y a écriture sur une chaîne brute (élément de la section {\texttt
+        .rodata}, ne pouvant être réécrit.
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+{\textbf{-g}} &
+	\begin{minipage}{0.7\linewidth}
+        Lors de la compilation, intégrer les élément de debug. Cela permet, lors du debugging de l'application durant
+        on exécution, de pouvoir s'appuyer sur les symboles et les métainformation (nom réel des fonctions, etc).
+        Dans le cas contraire, même le nom des fonctions (qui ne sont en fin de compte que des adresses) ne sont pas
+        présents dans le binaire.
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+{\textbf{-ggdb}} &
+	\begin{minipage}{0.7\linewidth}
+        Les symboles de debug sont optimisés pour gdb. Les informations sont plus grandes car mieux exploitée par le
+        debuggeur de la GNU.
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+\end{tabular}
+\label{tab:gcc_flags}
+\caption{Options les plus courantes du compilateur}
+\end{table}
+
+\paragraph{}
+Comme le tableau \ref{tab:gcc_flags} en montre un aperçu, il existe un grand nombre d'options de compilation. Il
+n'est ici présenté que les principales, mais en réalité, maîtriser ne serait-ce que la moitié de ces options demande
+plusieurs années de développement.
+
+\paragraph{}
+Fort heureusement, l'étape de compilation est la plus riche en terme d'option, et l'étape de linkage nécessite moins
+de connaissance.\\
+Cependant, la compréhention poussée du principe de fonctionnement du linkage est très importante car elle est à la
+base à de la compréhention de l'usage de la mémoire par les processus, et par extention de son impact sur ses
+performances et sur sa sécurité.
+
+\paragraph{}
+Enfin, il est important de noté que de nouvelles options de compilation apparaîssent au fur et à mesure des nouvelles
+versions de gcc. Avec un bon usage de ces options, on réduit fortement le risque de bug durant l'exécution du
+logiciel.
+
+
+\subsection{Les options de linker}
+
+\paragraph{}
+Seule deux option de linkage sont décrite dans le tableau \ref{tab:ld_opts}
+\begin{table}
+\begin{tabular}{|l|l|}
+\hline
+Option & Signification \\
+{\textbf{-l}} &
+	\begin{minipage}{0.7\linewidth}
+        Informe le linker que le logiciel à linker s'appuie sur une bibliothèque extérieure au logiciel. Cette option
+        est implicite pour la libc, mais doit être fournie pour toutes les autres bibliothèque. Seul le nom de la
+        bibliothèque, sans le prefixe {\it lib} doit être fourni. Exemple :\\
+        \begin{lstlisting}
+        gcc -o foo -lgtk foo.c
+        \end{lstlisting}
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+{\textbf{-L}} &
+	\begin{minipage}{0.7\linewidth}
+        Il arrive que la bibliothèque utilisée ne soit pas présent dans les répertoires par défaut des bibliothèques
+        ({\texttt /lib, /usr/lib} et {\texttt /usr/local/lib}. Il faut alors préciser au linker où se situe la
+        bibliothèque. Cette option prend en argument le chemin absolu vers la bibliothèque.
+        \end{minipage}\\
+        \hline
+%%%%%%%%%%%%%%%%%%%
+\end{tabular}
+\label{tab:ld_opts}
+\caption{Options de base du linker}
+\end{table}
+
