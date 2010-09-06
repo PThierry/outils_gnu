@@ -32,7 +32,6 @@ OBJS	     = $(SOURCE:.tex=.aux) $(SOURCE:.tex=.log) $(SOURCE:.tex=.out) $(SOURCE
                $(SOURCE:.tex=.brf) $(SOURCE:.tex=.bmt) $(SOURCE:.tex=.ind) $(SOURCE:.tex=.ilg) \
 	       $(SOURCE:.tex=.lot) *.ps *.mlf* *.mlt* *.mtc* document-fig*.tex *.log document-fig*.pdf tmp.inputs
 TODEL	     = tags *~ .*.swp
-LANG	     = $(shell cat config/config.tex|grep "newcommand.*lang"|sed -re "s:.*\{([fe][rn])\}.*:\1:")
 
 #############################################################################
 ## rules
@@ -57,7 +56,7 @@ pdf :
 #	$(BIBTEX) $(SOURCE_PREFIX)
 	makeindex $(SOURCE:.tex=.idx)
 	while [ `cat $(SOURCE:.tex=.log) | grep 'may have changed.' | wc -l` -ge 1 ]; do $(LATEX) $(LATEXOPT) $(LATEXOPT) $(SOURCE); done
-	mv $(SOURCE:.tex=.pdf) $(TARGET)_$(LANG).pdf
+	mv $(SOURCE:.tex=.pdf) $(TARGET)_fr.pdf
 
 clean : 
 	$(RM) $(RMFLAGS) $(OBJS) $(TODEL)
@@ -73,5 +72,5 @@ install : $(TARGET)
 
 view:
 	if [ ! -f $(TARGET) ]; then make all; fi
-	acroread $(TARGET)_$(LANG).pdf
+	acroread $(TARGET)_fr.pdf
 

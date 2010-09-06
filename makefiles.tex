@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:34 2010 Philippe THIERRY
-%% Last update Fri Sep  3 18:11:53 2010 Philippe THIERRY
+%% Last update lun. 06 sept. 2010 20:30:46 CEST Philippe THIERRY
 %%
 
 \chapter{La commande GNU Make}
@@ -27,15 +27,197 @@ ce qui peut parfois rendre les Makefiles non portables si ils utilisent ces fonc
 
 \subsection{Les cibles et les dépendances}
 
-\subsection{La norme GNU des intitulés de cibles}
+\paragraph{}
+Dans un fichier Makefile, on appelle {\it cible} (target) un ensemble de traitement réunis sous un
+même nom.\\
+Cette cible est appellable comme argument de la commande {\texttt make}, impliquant l'exécution de
+la cible demandée :
+\begin{lstlisting}
+sh$ make -j 2 ma_cible
+\end{lstlisting}
+
+\paragraph{}
+Un cible de Makefile se rédige ainsi:
+\begin{lstlisting}
+ma_cible:
+	echo "executing ma_cible"
+	cp fichier1 fichier2
+	echo "end of execution of ma_cible"
+\end{lstlisting}
+
+\paragraph{}
+Le nom d'une cible doit être écrite en un seul mot, et doit être impérativement seule avant les
+deux points. Il est possible de lui préciser des dépendances après les deux points, comme un
+ensemble d'autre cibles qui seront appellées dans l'ordre d'écriture.
+
+\paragraph{}
+Tous les traitements exécutés par une cible s'écrivent en commençant par le caractère tabulation,
+et doivent se succéder sans ligne blanche ou tout autre ligne ne commençant pas par une
+tabulation.\\
+Une ligne blanche indique la fin de la cible en cours.
+
+\paragraph{}
+Comme dit précédement, une cible peut avoir des dépendances envers d'autres cibles. Cela s'écrit
+simplement comme une suite de cibles à droite du deux points:
+\begin{lstlisting}[caption=Rédaction d'un premier Makefile,label=lst:mak1]
+prepare:
+	touch fichier1
+
+get_info:
+	cat /proc/cpuinfo > fichier1
+
+ma_cible: prepare get_info
+	echo "executing ma_cible"
+	cp fichier1 fichier2
+	echo "end of execution of ma_cible"
+\end{lstlisting}
+
+\paragraph{}
+en demandant l'exécution de la cible {\it ma\_cible}, la commande make va successivement exécuter,
+dans cette ordre, les cibles {\it prepare}, {\it get\_info}, et {\it ma\_cible}.
+
+\paragraph{}
+Comme on le voit dans cette section, le système de Makefile ne sert pas uniquement à automatiser la
+compilation. Il est capable d'exécuter n'importe quelle commande.
+
+L'usage d'un Makefile tel que dans le script \ref{lst:mak1} est assez simpliste. Il est en réalité
+possible de créer des Makefiles beaucoup plus complexes en s'appuyant complètement sur la grammaire
+de make.
 
 \section{Le langage des Makefiles}
 
 \subsection{Les variables}
 
+\paragraph{}
+Dans un Makefile, il est possible de définir des variables. La définition d'une variable se fait
+par convention avant la définition des règles. Ces dernières peuvent altérer la valeur d'une
+variable en fonction du besoin.
+
+\paragraph{}
+Une variable de Makefile s'écrit par convention en majuscule. Sa définition peut se faire de trois
+manières, comme l'indique le script \ref{lst:makvar}.
+
+\begin{lstlisting}[caption=les variables dans les Makefile,label=lst:makvar]
+VAR = foo
+VAR ?= foo
+VAR += foo
+\end{lstlisting}
+
+\paragraph{}
+Les trois manières d'assigner une valeur à une variables sont, dans l'ordre d'apparition :
+\begin{enumerate}
+\item la variable {\it VAR} vaut {\tt foo}
+\item la variable {\it VAR} vaut {\tt foo} uniquement si elle n'existe pas déjà. Si cette dernière
+est déjà existante dans le contexte d'exécution du Makefile, elle n'est pas modifiée.
+\item la variable {\it VAR} voit sa valeur concatènée avec la valeur en argument, un espace
+séparant les deux valeurs.
+\end{enumerate}
+
+\paragraph{}
+Il est possible d'assigner à une variable le résultat d'une ligne de commande. Pour cela, on
+encapsule la valeur dans le marqueur {\tt \$()}.
+
+\begin{lstlisting}[caption=Assigner le résultat d'une commande à une variable]
+DATE = $(date +"%d-%M-%Y")
+\end{lstlisting}
+
 \subsection{Les structures de contrôle}
 
+\paragraph{}
+Il existe des structure de contrôle dans le langage des Makefiles. Elle permette de faire de ne
+prendre en compte qu'une partie du Makefile en fonction de le valeur d'une donnée, ce qui permet
+par exemple de faire dépendre un traitement d'un élément extérieur.
+
+\begin{lstlisting}[language=make,caption=Les structures de contrôles des Makefiles,label=lst:mak_ctrl]
+CFLAGS=-W -ggdb
+
+ifeq ($(MORE_CFLAGS),1)
+	CFLAGS += -Wall -Wextra -Werror
+endif
+
+compile:
+	gcc $CFLAGS) my_file.c -o foo
+
+\end{lstlisting}
+
+\paragraph{}
+Le script \ref{lst:mak_ctrl} peux donc générer deux appels au compilateur. Un appel classique à
+{\tt make compile} exécute la commande suivante :\\
+\begin{lstlisting}
+gcc -W -ggdb my_file.c -o foo
+\end{lstlisting}
+à l'inverse, la commande {\tt MORE\_CFLAGS=1 make compile} exécute la commande suivante :
+\begin{lstlisting}
+gcc -W -ggdb -Wall -Wextra -Werror my_fyle.c -o foo
+\end{lstlisting}
+
+\paragraph{}
+Dans le cadre du script \ref{lst:mak_ctrl}, c'est l'assignation d'une variable qui est encadrée. Il
+est cependant possible d'utiliser les structures de contrôle pour encapsuler des cibles entières,
+en fonction du besoin.
+
+\paragraph{}
+Il existe d'autres structures de contrôle dans le langage des Makefile. Il s'agit des
+déclarations:\\
+\begin{itemize}
+\item {\tt ifneq-else-endif}, qui se base sur un test faux d'égalité
+\item {\tt ifdef-else-endif}, qui se base sur l'existance de l'argument
+\item {\tt ifndef-else-endif}, qui se base sur la non-existance de l'argument
+\end{itemize}
+
+
 \subsection{La récursivité}
+
+\paragraph{}
+Comme vu précédement, les sources d'un projet contient plusieurs répertoire. Par convention, un
+Makefile donné ne traite que du répertoire dans lequel il est présent. Ainsi, on rédige non pas un
+seul mais plusieurs Makefiles, avec un seul Makefile dit {\it racine}, se chargeant d'appeller les
+autres en fonction du besoin.
+
+\paragraph{}
+En considérant le répertoire sources suivant :
+\begin{lstlisting}
+doc/
+	Makefile
+	mydoc.tex
+src/
+	Makefile
+	main.c
+	main.h
+Authors
+ChangeLog
+Makefile
+README
+\end{lstlisting}
+
+\paragraph{}
+Par convention, le Makefile se trouvant à la racine du répertoire est dit Makefile {\it racine}.
+C'est lui qui se chargera d'appeller les autres Makefile en fonction du besoin. En effet, le
+développeur et plus généralement l'utilisateur du logiciel n'a pas à connaître la décomposition des
+sources du logiciel pour le construire. Seul les commandes fournies par le Makefile de la racine
+doivent suffirent à compiler l'ensemble.
+
+\paragraph{}
+Le Makefile de la racine devrait donc ressembler au script:
+\begin{lstlisting}
+all:
+	make -C src all
+
+doc:
+	make -C doc all
+
+help:
+	echo "make all compile les sources, make doc génère la documentation"
+\end{lstlisting}
+
+\paragraph{}
+L'option -C de make permet de lui spécifier dans quel répertoire il doit chercher le Makefile. On
+constate donc qu'en exécutant la commande {\tt make all} à la racine, cette dernière va, par
+récursion, appeller la commande {\tt make all} dans le répertoire src.\\
+Il en va de même pour la commande {\tt make doc} qui va appeller la commande {\tt make all}, dans
+doc.
+
+\subsection{Construire des éléments communs à tous les Makefile}
 
 \subsection{Les règles PHONY}
 \index{Makefile!PHONY}
