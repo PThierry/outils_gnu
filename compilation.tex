@@ -6,12 +6,12 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:18 2010 Philippe THIERRY
-%% Last update jeu. 02 sept. 2010 22:40:20 CEST Philippe THIERRY
+%% Last update Fri Sep  3 17:41:22 2010 Philippe THIERRY
 %%
 
 \chapter{La chaîne de compilation}
 
-{\it   Il   n'est   traité   ici   que   des   spécificités   de    la    chaîne    de    compilation    GNU    (gcc)}
+{\it  Il  n'est  traité  ici  que  des  spécificités  de  la  chaîne  de  compilation   GNU   (gcc)}
 
 \section{Principe de fonctionnement}
 
@@ -21,9 +21,9 @@ machines dont  la  programmation  se  faisait  en  assembleur  à  des  langages 
 d'aujourd'hui.
 
 \paragraph{}
-La construction d'un binaire se fait en plusieurs étapes bien distinctes :
+La   construction   d'un   binaire   se   fait   en   plusieurs    étapes    bien    distinctes    :
 \begin{enumerate}
-\item Traiter les éléments de préprocessing.\\Il s'agit, dans les langages comme le C ou le  C++,  de  substituer  les
+\item Traiter les éléments de preprocessing.\\Il s'agit, dans les langages comme le C ou le  C++,  de  substituer  les
 appels au macros (déclaré au travers de l'instruction de preprocessing \texttt{\#define}) par le contenu de la macro.\\
 Il en va de même pour l'inclusion des header, en prenant en  compte  des  problématiques  de  redondance  d'inclusion.
 \item Construire les fichiers objets.\\Un fichier objet est créé  par  source.   Dans  ce  fichier  sont  déclaré  les
@@ -35,10 +35,10 @@ bibliothèque.  Il en ressort un fichier avec l'extension {\texttt .a}, contenant
 objet utilisés pour construire la bibliothèque.  Cette étapes n'est pas toujours présente mais  est  assez  fréquente.
 \item Le linkage.\\Une fois les fichiers objet et les bibliothèques construire, il s'agit d'en faire un tout cohérent.
 On construit alors une table définissant les différentes sections du binaire (partie code, partie data, rodata,  etc),
-on résout les symboles inconnus venant des bibliothèques tierces comme la libc, et on  construit  les  métadonnées  du
-binaire (format ELF32 sur un Linux 32bits, ELF64 sur un linux 64 bits). Ces métadonnées seront utilisées par le noyau
-lors de la création du processus, pour déployer en mémoire  les  différents  élements  du  binaire,  et  pour  pouvoir
-amorcer sont exécution.
+on résout les symboles inconnus venant des bibliothèques tierces comme  la  libc,  et  on  construit
+les méta-données du binaire (format ELF32 sur un Linux 32bits, ELF64 sur un  linux  64  bits).   Ces
+méta-données seront utilisées par le noyau lors de la création du processus, pour déployer en mémoire  les  différents
+éléments du binaire,  et  pour  pouvoir amorcer sont exécution.
 \end{enumerate}
 
 \paragraph{}
@@ -55,7 +55,7 @@ la construction une erreur survient.
 
 \paragraph{}
 Comme précisé au dessus, l'étapes de préprocessing prend en compte toutes les  commandes  de  préprocessing  appellées
-dans   les   sources.    Ces   dernières   commencent   toutes   par    un    \texttt{\#}.     Il    s'agit    de    :
+dans  les  sources.   Ces  dernières  commencent  toutes  par  un  \texttt{\#}.   Il  s'agit  de   :
 \begin{lstlisting}[name=commandes de preprocessing, label=cpp_cmds]
 #ifndef
 #define
@@ -91,7 +91,7 @@ subsiste aucune.
 Vu la taille du fichier résultant du traitement du préprocessing, ce d dernier est mis en annexe.  On  constate  qu'il
 s'agit cependant toujours d'un fichier source C, parfaitement lisible. A ce stade, aucune compilation n'est encore effectuée.
 
-\subsection{La construction de fichiers objets: principe de la compilation séparée}
+\subsection{La  construction   de   fichiers   objets:   principe   de   la   compilation   séparée}
 
 \paragraph{}
 Une fois le traitement effectué par le préprocesseur, il faut passer à l'étape de compilation proprement dite. Il
@@ -101,22 +101,22 @@ pour chaque fichier source, avec comme seule différence dans le nom l'extention 
 
 \paragraph{}
 Les fichiers objets contienne directement du code binaire. Si un passage par le code assembleur devait être effectué,
-il aurait lieu pendant la construction du fichier objet, comme une étape intermédiaire.
+il  aurait  lieu  pendant  la  construction  du  fichier  objet,  comme  une  étape   intermédiaire.
 
 \paragraph{}
 Comme vu précédement, un fichier objet contient des symboles non résolus. Il s'agit par exemple d'appel à des
 fonctions extérieures (implémenté dans d'autres fichiers sources, dans des bibliothèques tierces) ou à des variables
 globales externes. Dans la table des symboles associée au fichier, on retrouve donc à la fois des symboles dits {\it
-résolus}, possédant une adresse, et {\it non résolus}, en attente d'une adresse.
+résolus},  possédant  une   adresse,   et   {\it   non   résolus},   en   attente   d'une   adresse.
 
 \paragraph{}
 Dans certains cas, on regroupe plusieurs fichiers objets en une {\it bibliothèque}. Les différentes tables des
-symboles sont alors regroupées en une seule, fournissant les mêmes informations.
+symboles   sont   alors   regroupées   en   une   seule,   fournissant   les   mêmes   informations.
 
 \paragraph{}
 Voici un extrait de la table des symboles de la glibc:
 
-\begin{lstlisting}[name=Extrait de la table des symboles de la glibc, label=libc_symb]
+\begin{lstlisting}[name=Extrait  de  la  table  des   symboles   de   la   glibc,   label=libc_symb]
 sh$ nm -r /usr/lib/libc.a
 ...
 dl-runtime.o:
@@ -181,7 +181,7 @@ implémentés (cas des symboles marqué {\it t} ou {\it T}, ou non-définit (cas des
 
 \paragraph{}
 Du fait qu'il ne s'agit ici que de la concaténation de la table des symboles de chaque fichier objet, on retrouve,
-pour un symbole donné plusieures occurences dont au maximum une seule marquée {\it T}.
+pour  un  symbole  donné  plusieures  occurences  dont  au  maximum  une  seule  marquée  {\it   T}.
 
 \paragraph{}
 Ainsi en cherchant le symbole {\texttt strlen} dans la libc, on retrouve une sortie ressemblant à la liste ci-dessous:
@@ -222,11 +222,11 @@ l'exécution, ces adresses seront modifiées pour pointer au bon endroit.
 Une fois les fichiers objets tous créés, il faut créer le binaire. Un binaire, tout comme un fichier objet, contient
 un certain nombre de données d'information sur sa structure qui lui sont associées. Ces données sont intégrées dans
 le fichier binaire. La manière dont sont structurées ces données et positionnées les différents élements du binaire
-(les différentes section, cf plus loin) définissent le format du binaire.
+(les   différentes   section,   cf    plus    loin)    définissent    le    format    du    binaire.
 
 \paragraph{}
 Sous Linux et dans les systèmes Unix (Unix System V), on parle de format ELF\footnote{Executable and Linkable
-Format}. L'image \ref{fig:elf} décrit la structure du binaire et ses différentes sections.
+Format}.  L'image \ref{fig:elf}\footnote{Image tirée de l'article sur le format ELF de Wikipedia} décrit  la  structure  du  binaire  et  ses  différentes  sections.
 
 \begin{figure}[ht]
 \begin{center}
@@ -245,14 +245,14 @@ par exemple.
 \item La section {\texttt .ro-data}, contenant les données accessibles en lecture seule. Il s'agit entre autre des
 chaîne de caractères {\it brutes}, comme la variable suivante :\\
 \begin{lstlisting}
-char	ma_version="version 1.0.2rc3";
+char    ma_version="version 1.0.2rc3";
 \end{lstlisting}
 \end{itemize}
 
 \paragraph{}
 Les sections qui ne figurent pas dans un binaires sont les sections {\it dynamiques}. Il s'agit du tas (heap) et de
 la pile (stack). En effet, ces section n'ont de sens que durant l'exécution du binaire, car sont construite au
-travers de l'exécution du code. Ces sections sont le propre d'un processus.
+travers   de   l'exécution   du   code.    Ces   sections   sont   le   propre    d'un    processus.
 
 \paragraph{}
 Lors du linkage, on ne retrouve plus qu'une seule section de code (section .text). Elle regroupe l'ensemble des
@@ -270,11 +270,11 @@ nombreuses autres bibliothèques, spécialisées chacune dans un domaine, comme la 
 libdvdread.
 
 \paragraph{}
-Il y a deux manières de prendre en compte les bibliothèques lors de la construction d'un binaire:
+Il y a deux manières de prendre en compte les bibliothèques lors de la  construction  d'un  binaire:
 \begin{enumerate}
 \item On intègre le code de la bibliothèque dans le binaire. Dans ce cas, les symboles de la bibliothèques sont
 intégrés comme autant de nouveau symboles dans la table des symboles du binaire. Le code des fonctions de la
-bibliothèques est intégré quant à lui dans la section {\texttt .text} du binaire.\\
+bibliothèques  est  intégré  quant  à  lui  dans  la   section   {\texttt   .text}   du   binaire.\\
 Il faut prendre note tout de fois que le linker, loin d'être bête, n'ajoute que le code de la bibliothèque nécessaire
 à l'exécution du binaire. Les symboles n'étant pas appellés directement ou indirectement dans le binaire ne sont pas
 intégrés. Cela a un impact lors de la gestion des options de linkage durant la phase de compilation. Il s'agit d'une
@@ -304,7 +304,7 @@ respectivement de cpp et de ld.
 
 \paragraph{}
 Tout d'abord, les options de preprocessing sont peu nombreuses et les connaître n'est pas une obligation. Sont
-décrites ici majoritairement les options de compilation, puis de linkage.
+décrites    ici    majoritairement    les    options    de    compilation,    puis    de    linkage.
 
 \subsection{Les options de compilation}
 
@@ -316,13 +316,13 @@ Le tableau \ref{tab:gcc_flags} décrit les option du compilateur GNU gcc.
 \hline
 Option & Signification \\
 {\textbf{-c}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Gcc génère un fichier objet. Seule l'étape de compilation, et au besoin de preprocessing sont exécutées.
         \end{minipage}\\
         \hline
 %%%%%%%%%%%%%%%%%%%
 {\textbf{-s}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Gcc génère un fichier assembleur. Selon les options d'optimisation, le compilateur peux générer un code
         assembleur peu représentatif du code du langage de haut niveau. C'est là qu'on se rend compte de la
         complexité des élements de parsing et d'optimisation du code.
@@ -330,55 +330,55 @@ Option & Signification \\
         \hline
 %%%%%%%%%%%%%%%%%%%
 {\textbf{-o}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Spécifie le nom du fichier de sortie du traitement à effectué. Ainsi si l'option -c est donnée le fichier de
         sortie est le fichier objet.
         \end{minipage}\\
         \hline
 %%%%%%%%%%%%%%%%%%%
 {\textbf{-W}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Cette option demande au compilateur d'afficher les warnings les plus fréquent. Cette option ne fait
-        qu'afficher à l'erreur l'élément de programmation hasardeux dans les cas les plus graves.
+        qu'afficher à l'erreur l'élément de programmation hasardeux dans les cas  les  plus  graves.
         \end{minipage}\\
         \hline
 %%%%%%%%%%%%%%%%%%%
 {\textbf{-Wall}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Idem à {\texttt -W}, mais prend en compte plus de Warnings. Il regrouple un sous ensemble des différents
-        warning géré par gcc (confer le manual de gcc, partie {\it Warning Options}.
+        warning  géré  par  gcc  (confer  le  manual  de  gcc,   partie   {\it   Warning   Options}.
         \end{minipage}\\
         \hline
 %%%%%%%%%%%%%%%%%%%
 {\textbf{-Werror}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Demande au compilateur de s'arrêter la compilation au premier warning décelé. Cette option est
         malheureusement rarement utilisée
         \end{minipage}\\
         \hline
 %%%%%%%%%%%%%%%%%%%
 {\textbf{-ansi}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Le compilateur vérifie la conformité du code au langage C ANSI. Dans le cas contrère, il renvoie un Warning.
         \end{minipage}\\
         \hline
 %%%%%%%%%%%%%%%%%%%
 {\textbf{-Wextra}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Vérifie un maximum de fragilités dans le code. Ce drapeau intègre la quasi-totalité des warnings supportés
         par gcc (pas tous !).
         \end{minipage}\\
         \hline
 %%%%%%%%%%%%%%%%%%%
 {\textbf{-Wwrite-strings}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Le compilateur vérifie qu'à aucun moment il y a écriture sur une chaîne brute (élément de la section {\texttt
         .rodata}, ne pouvant être réécrit.
         \end{minipage}\\
         \hline
 %%%%%%%%%%%%%%%%%%%
 {\textbf{-g}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Lors de la compilation, intégrer les élément de debug. Cela permet, lors du debugging de l'application durant
         on exécution, de pouvoir s'appuyer sur les symboles et les métainformation (nom réel des fonctions, etc).
         Dans le cas contraire, même le nom des fonctions (qui ne sont en fin de compte que des adresses) ne sont pas
@@ -387,7 +387,7 @@ Option & Signification \\
         \hline
 %%%%%%%%%%%%%%%%%%%
 {\textbf{-ggdb}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Les symboles de debug sont optimisés pour gdb. Les informations sont plus grandes car mieux exploitée par le
         debuggeur de la GNU.
         \end{minipage}\\
@@ -419,16 +419,16 @@ logiciel.
 \subsection{Les options de linker}
 
 \paragraph{}
-Seule deux option de linkage sont décrite dans le tableau \ref{tab:ld_opts}
+Seule   deux   option   de   linkage   sont    décrite    dans    le    tableau    \ref{tab:ld_opts}
 \begin{table}
 \begin{tabular}{|l|l|}
 \hline
 Option & Signification \\
 {\textbf{-l}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Informe le linker que le logiciel à linker s'appuie sur une bibliothèque extérieure au logiciel. Cette option
         est implicite pour la libc, mais doit être fournie pour toutes les autres bibliothèque. Seul le nom de la
-        bibliothèque, sans le prefixe {\it lib} doit être fourni. Exemple :\\
+        bibliothèque,   sans   le   prefixe   {\it   lib}   doit   être   fourni.     Exemple    :\\
         \begin{lstlisting}
         gcc -o foo -lgtk foo.c
         \end{lstlisting}
@@ -436,10 +436,10 @@ Option & Signification \\
         \hline
 %%%%%%%%%%%%%%%%%%%
 {\textbf{-L}} &
-	\begin{minipage}{0.7\linewidth}
+        \begin{minipage}{0.7\linewidth}
         Il arrive que la bibliothèque utilisée ne soit pas présent dans les répertoires par défaut des bibliothèques
         ({\texttt /lib, /usr/lib} et {\texttt /usr/local/lib}. Il faut alors préciser au linker où se situe la
-        bibliothèque. Cette option prend en argument le chemin absolu vers la bibliothèque.
+        bibliothèque.  Cette option prend  en  argument  le  chemin  absolu  vers  la  bibliothèque.
         \end{minipage}\\
         \hline
 %%%%%%%%%%%%%%%%%%%

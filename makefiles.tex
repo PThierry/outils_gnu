@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:34 2010 Philippe THIERRY
-%% Last update mer. 01 sept. 2010 20:28:36 CEST Philippe THIERRY
+%% Last update Fri Sep  3 18:11:53 2010 Philippe THIERRY
 %%
 
 \chapter{La commande GNU Make}
@@ -15,6 +15,15 @@
 gros logiciels, et quelles sont les problématiques qui en découlent}
 
 \section{Principe des \index{Makefile}Makefiles}
+
+\paragraph{}
+Le système de Makefile a été créé dans le but de simplifier la production d'un logiciel. Il
+s'articule autour de fichiers de configuration, nommés {\texttt Makefile}, qui définissent les
+différents éléments des sources et le traitement qui leur est associé.\\
+Ces fichiers de configuration sont traité par le binaire {\texttt make}, qui existe en plusieurs
+versions, dont les célèbres BSD Make et GNU Make. Sous Linux, c'est le make de la GNU qui est
+installé par défaut. Cette version intègre des capacités supplémentaires par rapport au make de BSD,
+ce qui peut parfois rendre les Makefiles non portables si ils utilisent ces fonctionnalités.
 
 \subsection{Les cibles et les dépendances}
 
