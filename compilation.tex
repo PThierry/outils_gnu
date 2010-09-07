@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:18 2010 Philippe THIERRY
-%% Last update Fri Sep  3 17:41:22 2010 Philippe THIERRY
+%% Last update mar. 07 sept. 2010 21:18:33 CEST Philippe THIERRY
 %%
 
 \chapter{La chaîne de compilation}
@@ -56,7 +56,7 @@ la construction une erreur survient.
 \paragraph{}
 Comme précisé au dessus, l'étapes de préprocessing prend en compte toutes les  commandes  de  préprocessing  appellées
 dans  les  sources.   Ces  dernières  commencent  toutes  par  un  \texttt{\#}.   Il  s'agit  de   :
-\begin{lstlisting}[name=commandes de preprocessing, label=cpp_cmds]
+\begin{lstlisting}[caption=commandes de preprocessing, label=cpp_cmds]
 #ifndef
 #define
 #endif
@@ -67,7 +67,7 @@ dans  les  sources.   Ces  dernières  commencent  toutes  par  un  \texttt{\#}. 
 
 \paragraph{}
 Soit le fichier source C suivant :
-\begin{lstlisting}[name=Premier example de code, label=code_cpp]
+\begin{lstlisting}[caption=Premier example de code, label=code_cpp]
 #include <stdio.h>
 
 #define VALUE   12
@@ -116,7 +116,7 @@ symboles   sont   alors   regroupées   en   une   seule,   fournissant   les   m
 \paragraph{}
 Voici un extrait de la table des symboles de la glibc:
 
-\begin{lstlisting}[name=Extrait  de  la  table  des   symboles   de   la   glibc,   label=libc_symb]
+\begin{lstlisting}[caption=Extrait  de  la  table  des   symboles   de   la   glibc,   label=libc_symb]
 sh$ nm -r /usr/lib/libc.a
 ...
 dl-runtime.o:
@@ -186,7 +186,7 @@ pour  un  symbole  donné  plusieures  occurences  dont  au  maximum  une  seule 
 \paragraph{}
 Ainsi en cherchant le symbole {\texttt strlen} dans la libc, on retrouve une sortie ressemblant à la liste ci-dessous:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Redondances des symboles dans une bibliothèque]
 sh$ nm -r /usr/lib/libc.a | grep strlen
                  U strlen
                  U strlen
@@ -411,7 +411,7 @@ base à de la compréhention de l'usage de la mémoire par les processus, et par ex
 performances et sur sa sécurité.
 
 \paragraph{}
-Enfin, il est important de noté que de nouvelles options de compilation apparaîssent au fur et à mesure des nouvelles
+Enfin, il est important de noter que de nouvelles options de compilation apparaîssent au fur et à mesure des nouvelles
 versions de gcc. Avec un bon usage de ces options, on réduit fortement le risque de bug durant l'exécution du
 logiciel.
 

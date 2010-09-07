@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:34 2010 Philippe THIERRY
-%% Last update lun. 06 sept. 2010 20:30:46 CEST Philippe THIERRY
+%% Last update mar. 07 sept. 2010 22:13:26 CEST Philippe THIERRY
 %%
 
 \chapter{La commande GNU Make}
@@ -32,13 +32,13 @@ Dans un fichier Makefile, on appelle {\it cible} (target) un ensemble de traitem
 même nom.\\
 Cette cible est appellable comme argument de la commande {\texttt make}, impliquant l'exécution de
 la cible demandée :
-\begin{lstlisting}
+\begin{lstlisting}[caption={Appeler une cible spécifique dans un Makefile},label=lst:call_target]
 sh$ make -j 2 ma_cible
 \end{lstlisting}
 
 \paragraph{}
 Un cible de Makefile se rédige ainsi:
-\begin{lstlisting}
+\begin{lstlisting}[language=Make,caption={Rédaction d'une première cible de Makefile},label=lst:mak_target]
 ma_cible:
 	echo "executing ma_cible"
 	cp fichier1 fichier2
@@ -59,7 +59,7 @@ Une ligne blanche indique la fin de la cible en cours.
 \paragraph{}
 Comme dit précédement, une cible peut avoir des dépendances envers d'autres cibles. Cela s'écrit
 simplement comme une suite de cibles à droite du deux points:
-\begin{lstlisting}[caption=Rédaction d'un premier Makefile,label=lst:mak1]
+\begin{lstlisting}[language=Make,caption={Définir des dépendances entres cibles de Makefile},label=lst:mak1]
 prepare:
 	touch fichier1
 
@@ -97,7 +97,7 @@ variable en fonction du besoin.
 Une variable de Makefile s'écrit par convention en majuscule. Sa définition peut se faire de trois
 manières, comme l'indique le script \ref{lst:makvar}.
 
-\begin{lstlisting}[caption=les variables dans les Makefile,label=lst:makvar]
+\begin{lstlisting}[language=Make,caption={Les variables dans les Makefile},label=lst:makvar]
 VAR = foo
 VAR ?= foo
 VAR += foo
@@ -117,7 +117,7 @@ séparant les deux valeurs.
 Il est possible d'assigner à une variable le résultat d'une ligne de commande. Pour cela, on
 encapsule la valeur dans le marqueur {\tt \$()}.
 
-\begin{lstlisting}[caption=Assigner le résultat d'une commande à une variable]
+\begin{lstlisting}[caption={Assigner le résultat d'une commande à une variable},label=lst:cmd_var]
 DATE = $(date +"%d-%M-%Y")
 \end{lstlisting}
 
@@ -128,7 +128,7 @@ Il existe des structure de contrôle dans le langage des Makefiles. Elle permette
 prendre en compte qu'une partie du Makefile en fonction de le valeur d'une donnée, ce qui permet
 par exemple de faire dépendre un traitement d'un élément extérieur.
 
-\begin{lstlisting}[language=make,caption=Les structures de contrôles des Makefiles,label=lst:mak_ctrl]
+\begin{lstlisting}[language=Make,caption=Les structures de contrôles des Makefiles,label=lst:mak_ctrl]
 CFLAGS=-W -ggdb
 
 ifeq ($(MORE_CFLAGS),1)
@@ -175,19 +175,14 @@ seul mais plusieurs Makefiles, avec un seul Makefile dit {\it racine}, se charge
 autres en fonction du besoin.
 
 \paragraph{}
-En considérant le répertoire sources suivant :
-\begin{lstlisting}
-doc/
-	Makefile
-	mydoc.tex
-src/
-	Makefile
-	main.c
-	main.h
-Authors
-ChangeLog
-Makefile
-README
+\begin{lstlisting}[caption=Répartition des Makefiles dans un projet,label=lst:mak_directory]
+ [f] Makefile
+ [d] doc/
+ [f]    Makefile
+ [f]    mydoc.tex
+ [d] src/
+ [f]    Makefile
+ [f]    foo.c
 \end{lstlisting}
 
 \paragraph{}
@@ -195,11 +190,11 @@ Par convention, le Makefile se trouvant à la racine du répertoire est dit Makefi
 C'est lui qui se chargera d'appeller les autres Makefile en fonction du besoin. En effet, le
 développeur et plus généralement l'utilisateur du logiciel n'a pas à connaître la décomposition des
 sources du logiciel pour le construire. Seul les commandes fournies par le Makefile de la racine
-doivent suffirent à compiler l'ensemble.
+doivent suffirent à compiler l'ensemble. En considérant le réperoire projet
+\ref{lst:mak_directory}, le Makefile de la racine serait proche de celui donné dans le script
+\ref{lst:root_mak}\\
 
-\paragraph{}
-Le Makefile de la racine devrait donc ressembler au script:
-\begin{lstlisting}
+\begin{lstlisting}[language=Make,caption={Makefile racine type},label=lst:root_mak]
 all:
 	make -C src all
 
@@ -219,10 +214,140 @@ doc.
 
 \subsection{Construire des éléments communs à tous les Makefile}
 
+\paragraph{}
+In arrive qu'un certain nombre d'éléments puissent être redondant parmis les différents Makefiles.
+Il peut s'agir de variables ou de cibles. Plutôt que de réécrire ces éléments dans chaque Makefile
+avec un risque d'inconcistance, il est possible d'écrire un sous ensemble du Makefile dans un
+fichier qui sera intégré dans les différents Makefiles du projet.
+
+\paragraph{}
+Par convention, ces makefiles ont une extention de fichier {\tt .mk}. Il n'y a pas de convention
+sur leur nom et peuvent être appellé de différentes manières.
+
+\paragraph{}
+Afin d'include un (ou plusieurs) de ces fichier dans un Makefile, on utilise la directive {\tt
+include}. Le script \ref{lst:mak_include} donne un exemple de ligne d'inclusion.
+
+\begin{lstlisting}{caption={Exemple de fichier .mk : infos.mk}}
+PROJECTVERSION=0.12.3
+PROJECTNAME=libfoobar
+AUTHOR="Dave Null"
+\end{lstlisting}
+
+\begin{lstlisting}{language=Make,caption={inclusion d'un fichier mk dans un Makefile},label=lst:mak_include}
+include infos.mk
+
+PROJDIR=$(PROJECTNAME)-$(PROJECTVERSION)
+
+init:
+	mkdir $(PROJDIR)
+	@echo $(AUTHOR) > $(PROJDIR)/Authors
+
+...
+\end{lstlisting}
+
+
+\section{Décomposer et automatiser la compilation}
+
+\subsection{La grammaire des Makefiles pour la compilation}
+
+\paragraph{}
+Les cibles spéciales
+
+\paragraph{}
+Les variables de cibles (fichiers de sortie, fichiers d'entrée)
+
+\subsection{Les subtilités des nom de cibles}
+
 \subsection{Les règles PHONY}
 \index{Makefile!PHONY}
 
-\section{Décomposer et automatiser la compilation}
+\paragraph{}
+
+\subsection{Un Makefile complet pour la compilation}
+
+\begin{lstlisting}{language=Make,caption={Exemple de Makefile complet pour la compilation},label=lst:mak_all}
+#############################################################################
+## basic macros
+#############################################################################
+CC          ?= gcc
+AR	     = ar
+CFLAGS      ?= -Wall -W -Werror -Wextra -ansi -pedantic
+LD           = ld
+LDFLAGS	     = 
+ARFLAGS	     = cr
+RM	     = rm
+RMFLAGS      = -rf
+TAR          = tar
+TARFLAGS     = -cjvf
+MAKE        ?= make
+INSTALL      = install
+CTAGS        = ctags -x > tags
+DEPEND       = makedepend $(CFLAGS)
+
+#############################################################################
+## lint -- static code mistakes detector
+#############################################################################
+LINT         = splint
+LARCH_PATH   = /usr/local/lib
+LCLIMPORTDIR = /usr/local/share/splint/imports
+
+#############################################################################
+## dist target file
+#############################################################################
+DISTTARGET   = .tar.bz2
+
+#############################################################################
+## project's source and generated files
+#############################################################################
+TARGET	     = foobar
+SOURCE	     =	main.c \
+		foo.c \
+		bar.c \
+		baz.c
+
+OBJS	     = $(SOURCE:.c=.o)
+HEADERS      = $(SOURCE:.c=.h)
+TODEL	     = tags *~ .*.swp
+
+#############################################################################
+## rules
+#############################################################################
+
+all : $(TARGET)
+
+$(TARGET) : $(OBJS)
+	$(CC) -o $@ $(OBJS) $(LDFLAGS)
+
+.c.o :
+	$(CC) $(CFLAGS) -c $<
+
+lint :
+	$(LINT) $(CFLAGS) $(SOURCE)
+
+tags : $(SOURCE)
+	$(CTAGS) $(SOURCE)
+
+depend : $(SOURCE)
+	$(DEPEND) $(SOURCE)
+
+.PHONY: clean
+
+clean : 
+	$(RM) $(RMFLAGS) $(OBJS) $(TODEL)
+
+distclean : clean
+	$(RM) $(RMFLAGS) $(TARGET)
+
+dist : distclean
+	$(TAR) $(TARFLAGS) $(DISTTARGET) .
+
+check : $(TARGET)
+	cd check; $(MAKE) all
+
+install : $(TARGET)
+	@echo you must be root to install
+\end{lstlisting}
 
 \section{Les limitations}
 

@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  mar. 24 nov. 2009 19:46:57 CET Philippe THIERRY
-%% Last update lun. 06 sept. 2010 20:14:30 CEST Philippe THIERRY
+%% Last update mar. 07 sept. 2010 22:19:02 CEST Philippe THIERRY
 %%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,12 +22,12 @@
 
 \usepackage[hundred]{vrsion}				% versioning support
 \usepackage[latin1]{inputenc}				% char format
-\usepackage{listings}					% lists support. Used for code
 \usepackage[usenames,dvipsnames]{color}					% basic color support
 \usepackage[T1]{fontenc} 				% caracteres norme iso-8859.
 			 				% risque de ne pas marcher avec les fichiers crees
                          				% sous windows.
-\usepackage[english,francais]{babel}			% french support
+\usepackage[francais]{babel}			% french support
+\usepackage{listings}					% lists support. Used for code
 \usepackage{amsfonts}					% special fonts support (math, etc)
 \usepackage{amsmath}
 \usepackage{amssymb}					% special symbols support
@@ -137,7 +137,7 @@
  columns=flexible, % 					%
  tabsize=2, % 						%
  frame=trBL, % 						%
- frameround=tttt, % 					%
+ %frameround=tttt, % 					%
  extendedchars=true, % 					%
  showspaces=false, % 					%
  showstringspaces=false, % 				%
@@ -147,14 +147,20 @@
  breakautoindent=true, % 				%
  captionpos=b,% 					%
  xrightmargin=0.5cm, % 					%
-     xleftmargin=0.5cm 					%
+     xleftmargin=0.5cm, 					%
+ keywordstyle=\color{blue},				%
+ extendedchars=false,
     } 							%
 
 
-\lstdefinestyle{make}
+\lstloadlanguages{make,C}
+
+\lstdefinelanguage{Make}
 {
-    emph={ifeq,else,endif,include}
+    keywords={ifeq,ifneq,ifdef,ifnded,else,endif,include},
+    sensitive=true,
 }
+
 
 \input{titlepage.tex}
 
@@ -173,6 +179,7 @@
 %opening
 \begin{document}
 
+\renewcommand*{\lstlistlistingname}{Liste des scripts}
 \selectlanguage{francais}
 
 \dominitoc
@@ -199,6 +206,7 @@
 \tableofcontents					% print table of contents
 \listoffigures
 \listoftables
+\lstlistoflistings
 \pagenumbering{arabic}					% update page number to arabic
 
 \renewcommand{\headrulewidth}{1pt}			% allow header bar
@@ -221,6 +229,7 @@
 % chapter. To be fixed in the future.
 %
 
+\input{abstract}
 
 \input{introduction.tex}
 
