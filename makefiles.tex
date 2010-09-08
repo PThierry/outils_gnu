@@ -6,10 +6,20 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:34 2010 Philippe THIERRY
-%% Last update mer. 08 sept. 2010 20:21:26 CEST Philippe THIERRY
+%% Last update mer. 08 sept. 2010 22:02:57 CEST Philippe THIERRY
 %%
 
 \chapter{La commande GNU Make}
+
+% style for Makefile
+\lstset{
+morecomment=[l][\color{blue}]{\#},
+morekeywords={include,ifeq,ifneq,ifndef,ifdef,else,endif,.c.o}
+%morecomment=[s][\color{green}]{\$(}{)},
+emph={[2].PHONY},emphstyle={[2]\color{red}}
+}
+
+
 
 {\it Il s'agit, dans le cadre de ce chapitre, de décrire comment on automatise la production de
 gros logiciels, et quelles sont les problématiques qui en découlent}
@@ -38,7 +48,7 @@ sh$ make -j 2 ma_cible
 
 \paragraph{}
 Un cible de Makefile se rédige ainsi:
-\begin{lstlisting}[language=Make,caption={Rédaction d'une première cible de Makefile},label=lst:mak_target]
+\begin{lstlisting}[caption={Rédaction d'une première cible de Makefile},label=lst:mak_target]
 ma_cible:
 	echo "executing ma_cible"
 	cp fichier1 fichier2
@@ -59,7 +69,7 @@ Une ligne blanche indique la fin de la cible en cours.
 \paragraph{}
 Comme dit précédement, une cible peut avoir des dépendances envers d'autres cibles. Cela s'écrit
 simplement comme une suite de cibles à droite du deux points:
-\begin{lstlisting}[language=Make,caption={Définir des dépendances entres cibles de Makefile},label=lst:mak1]
+\begin{lstlisting}[caption={Définir des dépendances entres cibles de Makefile},label=lst:mak1]
 prepare:
 	touch fichier1
 
@@ -97,7 +107,7 @@ variable en fonction du besoin.
 Une variable de Makefile s'écrit par convention en majuscule. Sa définition peut se faire de trois
 manières, comme l'indique le script \ref{lst:makvar}.
 
-\begin{lstlisting}[language=Make,caption={Les variables dans les Makefile},label=lst:makvar]
+\begin{lstlisting}[caption={Les variables dans les Makefile},label=lst:makvar]
 VAR = foo
 VAR ?= foo
 VAR += foo
@@ -128,7 +138,7 @@ Il existe des structure de contrôle dans le langage des Makefiles. Elle permette
 prendre en compte qu'une partie du Makefile en fonction de le valeur d'une donnée, ce qui permet
 par exemple de faire dépendre un traitement d'un élément extérieur.
 
-\begin{lstlisting}[language=Make,caption=Les structures de contrôles des Makefiles,label=lst:mak_ctrl]
+\begin{lstlisting}[caption=Les structures de contrôles des Makefiles,label=lst:mak_ctrl]
 CFLAGS=-W -ggdb
 
 ifeq ($(MORE_CFLAGS),1)
@@ -197,7 +207,7 @@ doivent suffirent à compiler l'ensemble. En considérant le réperoire projet
 \ref{lst:mak_directory}, le Makefile de la racine serait proche de celui donné dans le script
 \ref{lst:root_mak}\\
 
-\begin{lstlisting}[language=Make,caption={Makefile racine type},label=lst:root_mak]
+\begin{lstlisting}[caption={Makefile racine type},label=lst:root_mak]
 all:
 	make -C src all
 
@@ -229,15 +239,18 @@ sur leur nom et peuvent être appellé de différentes manières.
 
 \paragraph{}
 Afin d'include un (ou plusieurs) de ces fichier dans un Makefile, on utilise la directive {\tt
-include}. Le script \ref{lst:mak_include} donne un exemple de ligne d'inclusion.
+include}.
+Le script \ref{lst:mak_mk} est un exemple de fichier {\tt .mk}.
 
-\begin{lstlisting}{caption={Exemple de fichier .mk : infos.mk}}
+\begin{lstlisting}[caption={Exemple de fichier .mk : infos.mk},label=lst:mak_mk]
 PROJECTVERSION=0.12.3
 PROJECTNAME=libfoobar
 AUTHOR="Dave Null"
 \end{lstlisting}
 
-\begin{lstlisting}{language=Make,caption={inclusion d'un fichier mk dans un Makefile},label=lst:mak_include}
+Le script \ref{lst:mak_include} donne un exemple de ligne d'inclusion d'un tel fichier.
+
+\begin{lstlisting}[caption={inclusion d'un fichier mk dans un Makefile},label=lst:mak_include]
 include infos.mk
 
 PROJDIR=$(PROJECTNAME)-$(PROJECTVERSION)
@@ -278,7 +291,7 @@ Ainsi, on peut, à partir d'une variable ayant une chaîne de caractère donnée, la
 le souhaite pour définir d'autres variables. Un exemple étant toujours mieux qu'un long discrours,
 voici un exemple d'emploi permettant, pour une chaîne donnée, de remplacer une sous-chaîne par une
 autre :\\
-\begin{lstlisting}{language=Make,caption={Traitement de chaînes de caractères dans les Makefiles},label=lst:mak_glob}
+\begin{lstlisting}[caption={Traitement de chaînes de caractères dans les Makefiles},label=lst:mak_glob]
 SOURCE = main.c
 OBJ = $(SOURCE:.c=.o) # ici, OBJ vaut main.o
 ASM = $(SOURCE:.c=.s) # ici ASM vaut main.s
@@ -326,12 +339,13 @@ sh$
 \end{lstlisting}
 Afin de forcer l'exécution de la cible même si le fichier/dossier est prééxistant, on utilise la
 cible spéciale {\it .PHONY}. Cette cible force l'exécution des cibles dont elle dépend. Il y en a
-un exemple dans le script \ref{lst:mak_all}
+un exemple dans le script \ref{lst:mak_all}.
 
 \subsection{Un Makefile complet pour la compilation}
 
 \paragraph{}
-\begin{lstlisting}{language=Make,caption={Exemple de Makefile complet pour la compilation},label=lst:mak_all}
+
+\begin{lstlisting}[caption={Exemple de Makefile complet pour la compilation},label=lst:mak_all]
 #############################################################################
 ## basic macros
 #############################################################################
@@ -400,7 +414,7 @@ tags : $(SOURCE)
 depend : $(SOURCE)
 	$(DEPEND) $(SOURCE)
 
-.PHONY: clean doc
+.PHONY : clean doc
 
 clean : 
 	$(RM) $(RMFLAGS) $(OBJS) $(TODEL)
