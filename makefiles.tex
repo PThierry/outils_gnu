@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:34 2010 Philippe THIERRY
-%% Last update mar. 07 sept. 2010 22:13:26 CEST Philippe THIERRY
+%% Last update mer. 08 sept. 2010 20:21:26 CEST Philippe THIERRY
 %%
 
 \chapter{La commande GNU Make}
@@ -176,13 +176,16 @@ autres en fonction du besoin.
 
 \paragraph{}
 \begin{lstlisting}[caption=Répartition des Makefiles dans un projet,label=lst:mak_directory]
- [f] Makefile
  [d] doc/
- [f]    Makefile
- [f]    mydoc.tex
+  f     Makefile
+  f     mydoc.tex
  [d] src/
- [f]    Makefile
- [f]    foo.c
+  f     Makefile
+  f     foo.c
+  f AUTHORS
+  f ChangeLog
+  f Makefile
+  f README
 \end{lstlisting}
 
 \paragraph{}
@@ -249,23 +252,85 @@ init:
 
 \section{Décomposer et automatiser la compilation}
 
+\paragraph{}
+Il a été vu précédement que le système de Makefile fournit une base simple et efficace pour
+automatiser des traitements, et ce de toute nature.\\
+Cependant, l'élément pour lequel les Makefiles prennent tout leur sens et fournissent le plus de
+capacités est l'automatisation de la production. On parle ici bien de production et non simplement
+de compilation, qui n'est en réalité qu'un de ses multiples aspects, avec la génération de docs,
+l'exécution des campagnes de tests, ou encore l'installation de l'applicatif.
+
 \subsection{La grammaire des Makefiles pour la compilation}
 
 \paragraph{}
-Les cibles spéciales
+De manière générale, pour une règle donnée, il existe deux variables importantes :
+\begin{itemize}
+\item {\tt \$@} : cette variable contient le nom de la règle courante, et peut donc être utilisée
+lors de la rédaction des actions d'une règle.
+\item {\tt \$<} : cette variable contient le nom des éléments d'entrée d'une règle. Cette variable
+est régulièrement utilisée dans la rédaction des cibles de compilation.
+\end{itemize}
 
 \paragraph{}
-Les variables de cibles (fichiers de sortie, fichiers d'entrée)
+Un autre élément très utile des Makefile et l'aspect traitement de chaine de caractère lors de la
+définition d'une variable, dont la syntaxe est ressemblante à celle du {\it bash}.\\
+Ainsi, on peut, à partir d'une variable ayant une chaîne de caractère donnée, la modifier comme on
+le souhaite pour définir d'autres variables. Un exemple étant toujours mieux qu'un long discrours,
+voici un exemple d'emploi permettant, pour une chaîne donnée, de remplacer une sous-chaîne par une
+autre :\\
+\begin{lstlisting}{language=Make,caption={Traitement de chaînes de caractères dans les Makefiles},label=lst:mak_glob}
+SOURCE = main.c
+OBJ = $(SOURCE:.c=.o) # ici, OBJ vaut main.o
+ASM = $(SOURCE:.c=.s) # ici ASM vaut main.s
+\end{lstlisting}
+
+L'intérêt principale et de définir la chaîne à un seul endroit, pour en dériver sa valeur ensuite.
+Cela permet d'éviter une inconsistance en définissant plusieurs fois la chaîne complète.
 
 \subsection{Les subtilités des nom de cibles}
+
+\paragraph{}
+Il est tout à fait possible d'utiliser une variable comme nom de cible. C'est d'ailleurs souvent le cas
+comme le montre le script \ref{lst:mak_all}.
+
+\paragraph{}
+Il existe de plus des noms de cibles spécifiques. Il en existe un particulier pour la compilation.
+Afin d'en comprendre le sens, voici son usage:
+\begin{lstlisting}
+.c.o :
+	$(CC) $(CFLAGS) -c $<
+\end{lstlisting}
+Cette cible est faite pour la compilation des fichiers sources en fichiers objets. Cette règle
+prend en entrée les fichiers se terminant par l'extension {\tt .c} définis plus haut dans le
+makefile et les intègre à la variable {\tt \$<} pour pouvoir être utilisés.\\
+Dans le script \ref{lst:mak_all}, cette règle est utiliser pour générer les fichiers objets à
+partir des sources. L'ensemble des fichiers sources sont intégrés à la variable {\tt \$<} qui est
+utilisée dans la règle écrite pour cette cible.
 
 \subsection{Les règles PHONY}
 \index{Makefile!PHONY}
 
 \paragraph{}
+Il arrive parfois qu'un fichier ou un dossier du répertoire courant porte le même nom qu'une cible.
+C'est en général le cas de {\it doc}.\\
+Le problème est que le système de Makefile considère que si le nom d'une cible porte le nom d'un
+fichier ou d'un répertoire, ce dernier est la conséquence de la cible elle même. En conséquence, si
+ce dernier est préexistant lors de l'appel à cette cible et que cette dernière ne possède pas de
+dépendance, alors elle ne sera pas exécutée.\\
+Dans l'exemple d'une cible {\tt doc}, où le répertoire doc est déjà présent dans le répertoire
+courant, on a le comportement suivant:
+\begin{lstlisting}
+sh$ make doc
+target 'doc' already up to date.
+sh$
+\end{lstlisting}
+Afin de forcer l'exécution de la cible même si le fichier/dossier est prééxistant, on utilise la
+cible spéciale {\it .PHONY}. Cette cible force l'exécution des cibles dont elle dépend. Il y en a
+un exemple dans le script \ref{lst:mak_all}
 
 \subsection{Un Makefile complet pour la compilation}
 
+\paragraph{}
 \begin{lstlisting}{language=Make,caption={Exemple de Makefile complet pour la compilation},label=lst:mak_all}
 #############################################################################
 ## basic macros
@@ -284,6 +349,7 @@ MAKE        ?= make
 INSTALL      = install
 CTAGS        = ctags -x > tags
 DEPEND       = makedepend $(CFLAGS)
+MAKE         = make
 
 #############################################################################
 ## lint -- static code mistakes detector
@@ -322,6 +388,9 @@ $(TARGET) : $(OBJS)
 .c.o :
 	$(CC) $(CFLAGS) -c $<
 
+doc :
+	$(MAKE) -C doc all
+
 lint :
 	$(LINT) $(CFLAGS) $(SOURCE)
 
@@ -331,7 +400,7 @@ tags : $(SOURCE)
 depend : $(SOURCE)
 	$(DEPEND) $(SOURCE)
 
-.PHONY: clean
+.PHONY: clean doc
 
 clean : 
 	$(RM) $(RMFLAGS) $(OBJS) $(TODEL)
