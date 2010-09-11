@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  mar. 24 nov. 2009 19:46:57 CET Philippe THIERRY
-%% Last update mar. 07 sept. 2010 22:19:02 CEST Philippe THIERRY
+%% Last update Fri Sep 10 14:36:57 2010 Philippe THIERRY
 %%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,7 +56,7 @@
 \usepackage{times}
 \usepackage{ifpdf}
 \usepackage{appendix} 
-\usepackage{graphicx}
+\usepackage{graphics}
 \usepackage{float}
 \usepackage{alltt}
 \usepackage[sectionbib]{natbib}
@@ -75,13 +75,14 @@
   \usepackage{pst-plot} % For axes
 \end{psinputs}
 
+
 %\usepackage{draftcopy}				% mark doc as 'draft'
 %\draftcopyName{Provisoire}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Watermark for draft versions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\draftmode}{y}
+\newcommand{\draftmode}{n}
 
 \ifthenelse{\equal{\draftmode}{y}}{
   \usepackage{graphics,color} %
@@ -241,6 +242,7 @@
 
 \begin{appendices}
 \input{cpp_result.tex}
+\input{license.tex}
 \end{appendices}
 
 \backmatter

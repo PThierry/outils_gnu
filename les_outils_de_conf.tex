@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:52 2010 Philippe THIERRY
-%% Last update mer. 01 sept. 2010 20:46:37 CEST Philippe THIERRY
+%% Last update Thu Sep  9 16:34:49 2010 Philippe THIERRY
 %%
 
 \chapter{Les outils de configurations des sources}
@@ -19,12 +19,543 @@ employé}
 
 \section{Pourquoi configurer ses sources ?}
 
+\paragraph{}
+La production d'un logiciel nécessite un certain nombre de bibliothèques et d'outils dont il est
+plus prudent d'en vérifier la présence avant la production effective. De même, il peut être
+nécessaire, dans certains cas, de vérifier les capacités des outils de compilations afin de
+déterminer les options qu'il faut leur fournir.\\
+Ce type de vérification, bien que faisable dans le cadre d'un Makefile, n'est pas prévu pour être
+simplifié ou automatisé. C'est là qu'intervient les outils de configuration des sources et du
+système de production, permettant de fournir aux Makefiles toutes les informations nécessaires au
+bon fonctionnement de la production.\\
+Un autre point non pris en compte par les Makefile est le processus de packaging. Il s'agit de
+pouvoir construire de manière simple une archive, dans un format le plus générique possibe (en
+général il s'agit du format {\tt .tar.gz}, supporté par toute installation minimum d'un Linux ou
+d'un unix (*BSD par exemple) et compatible de toutes les plateformes embarquées.\\
+Cette archive doit être autosuffisante : il ne doit rien lui manquer pour pouvoir construire le
+logiciel associé, du moment que les outils de production sont présents.
+
+\paragraph{}
+Un exemple simple est celui de la construction de la documentation. Comme vu dans le chapitre
+précédant, il existe régulièrement une cible {\tt doc} dans le Makefile racine, permettant de
+construire la documentation.\\
+Cette documentation est parfois rédigée en \LaTeX, ce qui implique de posséder le compilateur LaTeX
+et les bibliothèques associées. Ces outils ne sont pas nécessairement présents sur une installation
+Linux standard, et il devient important de vérifier leur présence afin de fournir à l'utilisateur un
+message compréhensible lui demandant de les installer. A défaut, le Makefile produira un message de
+type {\tt file not found} et renverra une erreur, pas forcément simple à lire.
+
+
 \section{Les limite de la configuration : problématique de la cross-compilation}
+
+\paragraph{}
+Le système de configuration est capable de fournir un grand nombre d'informations. Le tableau
+\ref{tab:config_info} donne une liste d'éléments que ce dernier peut fournir en entrée de la
+production.
+
+\begin{tabular}{|l|}
+\hline
+{\it Informations récupérables par l'outil de configuration des sources}\\
+\hline
+\hline
+La version du compilateur, du préprocesseur, du linker \\
+\hline
+Les options que supporte le compilateur, le préprocesseur, le linker \\
+\hline
+La taille d'un integer, d'un long, d'un double, d'un pointeur \\
+\hline
+La présence de divers headers du langage de programation du projet \\
+\hline
+Pour une bibliothèque donnée, la présence de diverses fonctions du langage de programation du projet \\
+\hline
+La présence de tout binaire demandé \\
+\hline
+des valeurs de CFLAGS, LDFLAGS personnalisées en fonction des informations trouvées \\
+\hline
+des éléments de configuration pour la production et l'installation du binaire (emplacement, etc) \\
+\hline
+\end{tabular}
+
+\paragraph{}
+Parmis toutes les capacités du système de configuration, certaines ne sont pas nécessairement bonnes
+à utiliser. C'est entre autre le cas des information sur la taille en octets des types numériques.\\
+En effet, lorsque l'on fait de la cross compilation, c'est en général sur une plateforme donnée pour une
+autre. Par exemple, on cross-compile sur une architecture Intel IA32 pour un processeur ARM.
+
+\paragraph{}
+Lorsque le système de production récupère les informations sur les tailles de type, il le fait sur
+la plateforme locale, non sur la plateforme cible. Il n'a d'ailleurs aucune possibilité de
+connaître,  au moment de la compilation, les propriétés de la plateforme cible. Ainsi, on considère
+qu'un système de configuration des sources ne doit aider que pour vérifier les éléments nécessaire à
+la production, en aucun cas à l'exécution. On va donc vérifier la présence des différents binaires,
+headers et fonctions nécessaires à la compilation, et on laissera au développeur le soin
+d'implémenter son code de manière portable, sans avoir besoin de s'appuyer sur des informations que
+pourrait lui fournir le système de configuration lors de l'implémentation du logiciel.
 
 \section{Généralité sur la structure des autotools}
 
 \subsection{Le fichier configure.ac}
 
+\paragraph{}
+Le fichier {\tt configure.ac} est au c{\oe}ur de la configuration des sources. C'est dans ce fichier qu'on
+déclare le nom du projet, ça version, la structure des sources, la position des différents Makefiles
+et les éléments que l'on souhaite faire vérifier par le système de configuration.\\
+Le script \ref{lst:config_ac} est un exemple complet de fichier {\tt configure.ac}.
+
+\begin{lstlisting}[caption={Fichier configure.ac typique d'un projet logiciel en C},label=lst:config_ac]
+#############################################################################
+# basic init                                                                #
+#############################################################################
+AC_INIT([libfoo], [0.98.7.rc2], [Philippe.thierry@ece.fr], [libfoo])
+
+# version minimum des autotools
+AC_PREREQ([2.61])
+# type de projet, format de l'archive de sortie
+AM_INIT_AUTOMAKE([1.9.5 foreign dist-bzip2 no-dist-gzip foreign])
+# repertoire parent des sources C
+AC_CONFIG_SRCDIR([src/libfoo.h])
+# nom du fichier header ou les infos récupérées seront écrites
+AM_CONFIG_HEADER(config.h)
+# langage du projet
+AC_LANG([C])
+
+#############################################################################
+# C specific standard verifications                                         #
+#############################################################################
+# verifier la compatibilite posix de la toolchain
+AC_ISC_POSIX
+# verifier le support du C
+AC_PROG_CC
+# verifier le support du C ANSI
+AM_PROG_CC_STDC
+# verifier la presence des header pour le C ANSI
+AC_HEADER_STDC
+# verifie le support des mots clefs const, inline et volatile, ou suppression
+# de ces mots clefs lors de la compilation
+AC_C_CONST
+AC_C_INLINE
+AC_C_VOLATILE
+
+#############################################################################
+# Checking some basic headers and funcs                                     #
+#############################################################################
+AC_CHECK_HEADER([sys/types.h],,AC_MSG_ERROR([Cannot find sys/types.h ! Check your installation !]))
+AC_CHECK_HEADER([ctype.h],,AC_MSG_ERROR([Cannot find ctype.h ! Check your installation !]))
+AC_CHECK_HEADER([inttypes.h],,AC_MSG_ERROR([Cannot find inttypes.h ! Check your installation !]))
+AC_CHECK_HEADER([errno.h],,AC_MSG_ERROR([Cannot find errno.h ! Check your installation !]))
+AC_CHECK_HEADER([string.h],,AC_MSG_ERROR([Cannot find string.h ! Check your installation !]))
+AC_CHECK_HEADER([sys/stat.h],,AC_MSG_ERROR([Cannot find sys/stat.h ! Check your installation !]))
+
+# verification l'accessibilite de certaines fonctions
+AC_CHECK_FUNCS([strndup strncpy strdup strcat strcpy dup dup2 sigaction \
+sigprocmask htons htonl snprintf sprintf fcntl])
+
+# checking sizeofs (attention ! incompatible de la cross compilation !)
+AC_CHECK_SIZEOF([int])
+AC_CHECK_SIZEOF([long])
+AC_CHECK_SIZEOF([long long])
+AC_CHECK_SIZEOF([double])
+AC_CHECK_SIZEOF([int *])
+
+#############################################################################
+# Checking libraries presence                                               #
+#############################################################################
+AC_CHECK_LIB(m, powf, [], AC_MSG_ERROR([Cannot find libm match library ! Check your installation !]), [])
+
+#############################################################################
+# Support for compiler capacity to manage warning flags                     #
+#############################################################################
+
+# verification des flags supportes par le compilateur
+# creation de la variable WARNING_CFLAGS en fonction de ce qui est supporte
+LIBFOO_CC_WARNINGS([
+                      [-Wall],
+                      [-W],
+                      [-Werror],
+                      [-Wundef],
+                      [-Wno-multichar],
+                      [-Wextra],
+                      [-Wtrigraphs],
+                      [-Wundef],
+                      [-Wswitch],
+                      [-Wunused],
+                      [-Wmissing-prototypes],
+                      [-Wpacked],
+                      [-Waggregate-return],
+                      [-Wimplicit],
+                      [-Wcast-qual],
+                      [-Wcast-align],
+                      [-Wwrite-strings],
+                      [-Wuninitialized],
+                      [-Winit-self],
+                      [-fno-common],
+                      [-pedantic],
+                      [-Wshadow],
+                      [-Wunsafe-loop-optimizations],
+                      [-std=c99],
+                      [-Wreturn-type],
+                      [-Wimplicit-int],
+                      [-Wmain],
+                      [-Wcomment],
+                      [-Wformat],
+                      [-Wchar-subscripts],
+                      [-Wimplicit-function-declaration],
+                      [-Wchar-subscripts],
+                      [-Wparentheses],
+                      [-Wmissing-declarations],
+                      [-Wredundant-decls],
+                      [-Wstrict-prototypes],
+                      [-Wnested-externs],
+                      [-Wfloat-equal],
+                      [-Wpointer-arith],
+                      [-Wbad-function-cast],
+                      [-Wsequence-point],
+])
+
+#############################################################################
+# Support for static lib creation                                           #
+#############################################################################
+# demande d'utiliser libtool pour construire la bibliotheque libfoo.la
+AC_PROG_LIBTOOL
+
+############################################################################
+# Checking needed softwares presence                                        #
+#############################################################################
+# demande d'utiliser l'utilitaire install pour la cible d'installation du projet
+AC_PROG_INSTALL
+
+# verification de la presence du binaire doxygen
+AC_CHECK_PROG([DOXYGEN], [doxygen], [yes], [no])
+if test X$DOXYGEN = "X:"; then
+  AC_MSG_WARN([Unable to detect doxygen in your path. You will not be able \
+  to generate libcommon developpement documentiation.], 2)
+  doxygen="no";
+else
+  doxygen="yes";
+fi
+
+# verification de la presence du binaire dot
+AC_CHECK_PROG([DOT], [dot], [yes], [no])
+if test X$DOT = "X:"; then
+  AC_MSG_WARN([Unable to detect dot in your path. You will not be able \
+  to generate libcommon developpement documentiation.], 2)
+  dot="no";
+else
+  dot="yes";
+fi
+
+# verification de la presence du binaire python
+AC_CHECK_PROG([PYTHON], [python], [yes], [no])
+if test X$PYTHON = "X:"; then
+  AC_MSG_WARN([Unable to detect python in your path. You will not be able \
+  to generate libcommon test framework results for profiling.], 2)
+  python="no";
+else
+  python="yes";
+fi
+
+# verification de la presence du binaire sloccount
+AC_CHECK_PROG([SLOCCOUNT], [sloccount], [yes], [no])
+if test X$SOCCOUNT = "X:"; then
+  AC_MSG_WARN([Unable to detect sloccount in your path. You will not be able \
+  to generate the SLOC counts.], 2)
+  sloccount="no";
+else
+  sloccount="yes";
+fi
+
+# verification de la presence du binaire gprof
+AC_CHECK_PROG([GPROF], [gprof], [yes], [no])
+if test X$GPROF = "X:"; then
+  AC_MSG_WARN([Unable to detect gprof in your path. You will not be able \
+  to generate libcommon function calls profile.], 2)
+  gprof="no";
+else
+  gprof="yes";
+fi
+
+# verification de la presence du binaire gcov
+AC_CHECK_PROG([GCOV], [gcov], [yes], [no])
+if test X$GCOV = "X:"; then
+  AC_MSG_WARN([Unable to detect gcov in your path. You will not be able \
+  to generate libcommon tests coverage.], 2)
+  gcov="no";
+else
+  gcov="yes";
+fi
+
+# verification de la presence du binaire valgrind
+AC_CHECK_PROG([VALGRIND], [valgrind], [yes], [no])
+if test X$VALGRIND = "X:"; then
+  AC_MSG_WARN([Unable to detect valgrind in your path. You will not be able \
+  to generate dynamic memory usage in libcommon tests.], 2)
+  valgrind="no";
+else
+  valgrind="yes";
+fi
+
+# verification de la presence du binaire latex
+AC_CHECK_PROG([LATEX], [latex], [yes], [no])
+if test X$LATEX = "X:"; then
+  AC_MSG_WARN([Unable to detect latex in your path. You will not be able \
+  to generate libcommon architecture documentation.], 2)
+  latex="no";
+else
+  latex="yes";
+fi
+
+# verification de la presence du binaire htlatex
+AC_CHECK_PROG([HTLATEX], [htlatex], [yes], [no])
+if test X$HTLATEX = "X:"; then
+  AC_MSG_WARN([Unable to detect htlatex in your path. You will not be able \
+  to generate web part of libcommon architecture documentation.], 2)
+  htlatex="no";
+else
+  htlatex="yes";
+fi
+
+#############################################################################
+# Checking specific arguments presence                                      #
+#############################################################################
+# support de l'option --with-efence, pour utiliser la bibliotheque Libefence
+AC_ARG_WITH(efence, [  --with-efence           Link with electric fence ])
+if test "$with_efence" = "yes"
+then
+	AC_CHECK_LIB(efence, EF_ALIGNMENT, LIBS="${LIBS} -lefence", AC_MSG_ERROR(libefence not found))
+        efence="yes";
+        EFENCE=1;
+else
+	efence="no";
+fi
+
+# support de l'option --with-debug, ajoutant les options de debug aux CFLAGS
+AC_ARG_WITH(debug, [  --with-debug            Activate -g option of gcc and delete -DNDEBUG macro])
+if test "$with_debug" = "yes"
+then
+	debug="yes";
+        cppdebug=1;
+        DEBUG="-g";
+else
+	debug="no";
+        cppdebug=0;
+        DEBUG="";
+fi       
+AC_DEFINE_UNQUOTED([HAVE_DEBUG], ${cppdebug}, [specify if the software has been configured in debug mode])
+
+#############################################################################
+# Generating CFLAGS...                                                      #
+#############################################################################
+
+# construction complete des CFLAGS, en fonction des resultats precedants
+CFLAGS="$CFLAGS -O2 $DEBUG -DLINUX -D_XOPEN_SOURCE=600 -DMEMTRACE -std=c99 $WARNING_CFLAGS"
+
+#############################################################################
+# Finishing. Specify new conditionnals and Makfiles                         #
+#############################################################################
+# creation d'une variable, HTLATEX, qui sera passée à tous les Makefiles, avec
+# comme contenu le résultat du test ci-dessous
+AM_CONDITIONAL(HTLATEX, test x$htlatex = xyes)
+
+# liste des Makefiles à generer à partir des fichiers Makefile.am (confer plus loin)
+AC_CONFIG_FILES([
+Makefile
+  doc/Makefile
+  src/Makefile
+    src/socket/Makefile
+    src/socket/test/Makefile
+    src/libevent/test/Makefile
+    src/libevent/Makefile
+    src/types/Makefile
+    src/debug/Makefile
+    src/debug/test/Makefile
+    src/debug/man/Makefile
+    src/list/Makefile
+    src/string/Makefile
+    src/string/test/Makefile
+    src/utils/Makefile
+    src/utils/test/Makefile
+    src/getopt/Makefile
+    src/getopt/test/Makefile
+    src/getopt/man/Makefile
+    src/match/Makefile
+    src/match/test/Makefile
+    src/version/Makefile
+    src/version/test/Makefile
+    src/unitary_test/Makefile
+    src/unitary_test/test/Makefile
+    src/cycles/Makefile
+    src/cycles/test/Makefile
+    src/cycles/man/Makefile
+    src/memory/Makefile
+    src/memory/test/Makefile
+    src/container/Makefile
+    src/container/fifo/Makefile
+    src/container/fifo/test/Makefile
+    src/container/fifo/man/Makefile
+    src/container/stack/Makefile
+    src/container/stack/test/Makefile
+    src/container/stack/man/Makefile
+  test/Makefile
+])
+
+# fin du fichier configure.ac
+AC_OUTPUT
+
+# ajout de quelques informations sur la sortie standard
+echo;
+echo Configuration completed;
+echo;
+echo System detected................... `uname -s`;
+echo;
+echo -- compilation needs are all OK;
+echo;
+echo -- documentation needs :;
+echo latex found....................... $latex;
+echo htlatex found..................... $htlatex;
+echo Doxygen found..................... $doxygen;
+echo Dot found......................... $dot;
+echo;
+echo -- test framework needs :;
+echo Python found...................... $python;
+echo Sloccount found................... $sloccount;
+echo Gprof found....................... $gprof;
+echo Gcov found........................ $gcov;
+echo valgrind found.................... $valgrind;
+echo Debug activated................... $debug;
+echo Libefence activated............... $efence;
+echo;
+echo Type make to compile;
+echo;
+\end{lstlisting}
+
+\paragraph{}
+Les fichiers {\tt configure.ac} sont toujours assez long, et leur rédaction peut être fastidieuse.
+Cependant, ils ont tous une structure assez proche, ce qui fait qu'on peut aisément reprendre un
+fichier préexistant et l'adapter pour un nouveau projet.
+
+
+
 \subsection{Les amorces de Makefiles (Makefile.am)}
 
-\subsection{Les cibles les plus fréquentes}
+\paragraph{}
+Dans le fichier {\tt configure.ac} sont déclarés un certain nombre de fichiers {\tt Makefile}. Ces
+derniers ne sont pas directement écrits par le développeur, mais générés à partir de fichiers
+nommés {\tt Makefile.am} ({\it am} pour automake). Ces derniers ont une syntaxe proches du
+Makefile, mais fournissent un certain nombre de mots clefs rendant plus simple la rédaction des
+Makefiles.
+
+Dans le chapitre précédant, un fichier Makefile type est décrit. Le script \ref{lst:mak_am} décrit
+un fichier Makefile.am générant un fichier Makefile plus riche encore, mais avec une syntaxe plus
+lisible.
+
+\begin{lstlisting}[caption={Structure type d'un fichier Makefile.am},label=lst:mak_am]
+# les cibles standards doivent d'abord s'exécuter dans le sous-reperoire lib, puis dans le
+# repertoire courant
+SUBDIRS = lib .
+
+# nom du binaire que genere le Makefile
+bin_PROGRAMS = mysoft
+
+# options de compilation supplementaire du binaire. la variable CFLAGS est fournie par le script configure.
+AM_CFLAGS = -I$(top_srcdir)/src/lib/utils \
+            -I$(top_srcdir)/src/lib/string \
+            -I$(top_srcdir)/src/lib/list
+            $(CFLAGS)
+
+# sources du binaire mysoft
+mysoft_SOURCES = main.c
+
+# en-tete du binaire mysoft. Cette en-tete ne doit pas etre installee sur le systeme
+# lors de l'execution de la cible install (prefix noinst_)
+noinst_HEADERS = main.h
+
+# liste des programmes de test a executer par la cible 'check'
+TESTS		= test other_test.pl
+
+# parmis les programmes de test, il y en a un a compiler
+check_PROGRAMS	= test
+
+# source du binaire 'test'
+test_c_SOURCES =   test.c
+
+# options de linkage supplementaire pour construire le programme 'test'
+test_LDADD = liblist.a \
+             lib/libutils.a \
+	     lib/libstring.a
+
+# fichiers a supprimer par la cible 'clean'
+CLEANFILES = *~ .*.swp .*.swo output* *.gcov *.gprof
+
+# definition d'une cible supplementaire
+foobar:
+	echo "foobar !"
+\end{lstlisting}
+
+\paragraph{}
+Comme le montre le script \ref{lst:mak_am}, les cibles du Makefile qui sera généré ne sont pas
+définies explicitement, mais construite à partir des informations fournie dans le fichier {\tt
+Makefile.am}. Il reste cependant possible de définir des cibles supplémentaires en cas de besoin.
+
+\paragraph{}
+Le système de {\tt Makefile.am} génère, au travers de l'exécution du script {\tt configure} les
+fichiers Makefiles. Un certain nombre de règles dites {\it standard} sont créées. Voici les
+principales règles qui sont créées dans tous les Makefiles :
+
+\begin{itemize}
+\item all : produit le ou les programmes du projet
+\item check : compile si besoin et exécute les programmes de test
+\item dist : construit une archive autonome à partir du répertoire projet
+\item distcheck : construit une archive, et vérifie sont bon fonctionnement en la désarchivant et
+en exécutant le fichier configure et les cibles check du répertoire où elle est désarchivée.
+\item clean : détruit les fichiers temporaire (fichiers objets, etc)
+\item distclean : détruit les programmes et élément finaux construits
+\item doc : construit la documentation
+\end{itemize}
+
+\paragraph{}
+Le script \ref{lst:mak_am} fournit des informations pour remplir les cibles all, check distcheck,
+et clean. Certaines cibles, comme dist, clean, distclean et distcheck possèdent des template
+fonctionnels sans rédaction explicite dans les fichiers Makefile.am.
+
+\subsection{Construire le script configure}
+
+\paragraph{}
+A partir du fichier {\tt configure.ac} et des fichiers {\tt Makefile.am}, on génère un script shell,
+assez volumineux également, appellé {\it configure}. C'est ce script qui est appellé lors de la
+célèbre succession de commandes {\tt ./configure; make; make install}.
+
+\paragraph{}
+Pour construire ce fichier, ainsi qu'un certain nombre de fichiers intermédiaires, on appelle
+l'utilitaire {\tt autoreconf}. On retrouve souvent dans un projet un fichier {\tt autogen.sh},
+parfois appellé {\tt bootstrap}, qui s'occupe d'appeller cette commande. Il est cependant
+normalement pas nécessaire à l'utilisateur de l'appeller, car le fichier configure est normalement
+fournit avec les sources du projet.
+
+\paragraph{}
+L'ensemble des vérifications décrites plus haut sont faite au moment où est exécuté le fichier
+{\tt configure}. Ce dernier est d'ailleurs assez verbeux, et il indique bien les différents éléments
+qu'il vérifie.
+
+\section{Synthèse et conclusion}
+
+\paragraph{}
+Le système de production des autotools est en réalité un peu plus complexe que ce qui est décrit
+dans ce chapitre, comme l'indique la figure \ref{fig:autoconf}. Cependant, les éléments de ce
+chapitre sont suffisant pour apréhender les problèmes dont les autotools pouraient être la cause
+dans l'emploi de paquets source de logiciels open-source.
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=6cm]{pictures/autoconf}
+\end{center}
+\label{fig:autoconf}
+\caption{Etapes successives de la configuration d'un projet}
+\end{figure}
+
+
+\paragraph{}
+Ce que l'on peut conclure de ce chapitre est que les outils de configuration des sources comme les
+autotools sont très puissants, mais complexe à comprendre du fait de leur richesse.\\
+Cependant, du fait de leur usage très fréquent, ils restent incontournables dès qu'il est
+nécessaire de considérer des projets au format sources, que ce soit pour créer un projet ou pour
+construire un environnement embarqué.

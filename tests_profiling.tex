@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:08:07 2010 Philippe THIERRY
-%% Last update Fri Sep  3 15:15:43 2010 Philippe THIERRY
+%% Last update Thu Sep  9 16:33:12 2010 Philippe THIERRY
 %%
 
 \chapter{Les outils de test et de profiling des applicatifs}
@@ -135,15 +135,23 @@ ne developpe pas des logiciels pour l'aronautique !
 
 \paragraph{}
 Métrologie du logiciel performance: Comme  vue précédement, en partant
-de l'hypothèse qu'il  existe (!)  des logiciels  de  test, en ajoutant
+de l'hypothèse qu'il  existe  des logiciels  de  test, en ajoutant
 également le fait  que ces logiciels  de test vont effectuer des tests
 de  manière automatique, il peut être  intérresant  de profiter de cet
 effort de test pour vérifier  le comportement temporel du logiciel  en
 terme de boucles  et d'appel de  fonctions.  C'est le rôle de  l'outil
-{\texttt gprof}\index{Gprof} qui à  l'instar de {\texttt gcov} va permettre  après un post traitement de
-fournir des graphes permettant d'analyser le bon comportement .
+{\texttt gprof}\index{Gprof} qui à  l'instar de {\texttt gcov} va permettre
+après un post traitement de fournir des graphes permettant d'analyser le bon
+comportement.
 
-FIXME Phil, mettre un exemple ici issu de libcommon avec explication
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=18cm]{pictures/gprof2dot}
+\end{center}
+\label{fig:elf}
+\caption{Exemple de graphe d'appel résultant de l'exécution de GProf}
+\end{figure}
+
 
 
 \subsection{Mesurer la complexité d'un source: pmccabe}
@@ -159,9 +167,8 @@ critères  permettant de définir   le caractère {\it complexe} du  logiciel ?
 Cette question est d'autant plus cruciale  que selon la réponse, d'une
 part l'effort de test   va être important,  d'autre part  l'effort  de
 maintenance  serra élevé.  C'est la  que se positionne l'outil pmccabe
-du nom de  Mr Mac Cabe, universitaire dans  les années 80.\\
-
-FIXME: ( Phil merci de vérifier!).
+du nom de  George P. MacCabe, professeur de statistique de l'université
+de Purdue University aux Etats Unis.\\
 
 \paragraph{}
 Il  s'agit de définir  un indice de complexité compris
@@ -176,22 +183,46 @@ programmes   critiques mettent  la tenue  d'un   VG  $\le 9$  comme donnèe
 d'entrée ET   clé de paiement  , en  d'autre terme, le  fournisseur de
 logiciel n'est pas payé tant que le VG < 9 !
 
-\paragraph{}
-Tous ces outils contribuent un métier : le génie logiciel
-
-
-
-
-
-
-
-
 \section{Validation de la configuration mémoire et de l'emploi des caches}
 
 \subsection{Valgrind}
 
+\paragraph{}
+Valgrind est un outil open-source permettant de fournir des informations sur la consommation
+mémoire dynamique d'un programme. Il ne nécessite pas de recompiler le programme cible, son
+fonctionnement s'appuyant sur une substitution des appels aux fonctions de gestion mémoire de la
+libc par ces propres fonctions. Ceci permet, de manière transparente, de détecter des éléments
+comme :
+\begin{itemize}
+\item La consommation mémoire lors d'une exécution donnée
+\item Le nombre d'allocation et de désallocation de mémoire
+\item Les buffers overflows
+\item Les fuites mémoire
+\end{itemize}
+
 \subsection{Cachegrind}
 
+\paragraph{}
+Cachegrind est un programme de la famille de Valgrind, mais qui se concentre sur la gestion du
+cache de données. Il prend un programme en argument et fournit, pour une exécution donnée de
+celui-ci, la consommation du cache de donnée, le taux de cache-hits et de cache-miss, et d'autres
+éléments d'information liés aux caches.\\
+Cachegrind implémente un simulateur d'algorithme de cache de type LRU avec un cache à deux niveaux.
+C'est d'ailleurs sa faiblesse : peu d'algorithmes de caches sont implémentés. C'est cependant une
+base très intéressante pour définir le profil de consommation de cache d'un programme.
 
 \subsection{Mesurer la lourdeur d'un projet: sloccount}
+
+\paragraph{}
+Le programme {\it sloccount} est un binaire fournissant des données de métrologies sur les sources
+d'un projet. Il fournit le nombre de ligne de code détectées dans un fichier ou un répertoire, par
+langage. Il fournit également le coût théorique de l'implémentation du projet, en heures et en
+dollars, à partir du nombre de lignes de code trouvées.
+
+\section{Synthèse}
+
+\paragraph{}
+Il existe un grand nombre de projets fournissant des informations utiles tant au développeur qu'à
+l'intégrateur. Ils sont peu employés par la communauté mais ont une réelle valeur ajouté dans le
+cadre de systèmes industriels. Tous ces outils contribuent un métier : le génie logiciel
 

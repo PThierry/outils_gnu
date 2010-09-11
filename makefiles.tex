@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:34 2010 Philippe THIERRY
-%% Last update mer. 08 sept. 2010 22:02:57 CEST Philippe THIERRY
+%% Last update Thu Sep  9 15:14:26 2010 Philippe THIERRY
 %%
 
 \chapter{La commande GNU Make}
@@ -300,6 +300,31 @@ ASM = $(SOURCE:.c=.s) # ici ASM vaut main.s
 L'intérêt principale et de définir la chaîne à un seul endroit, pour en dériver sa valeur ensuite.
 Cela permet d'éviter une inconsistance en définissant plusieurs fois la chaîne complète.
 
+\subsection{Les variables de compilation}
+
+\paragraph{}
+Il existe un certain nombre de variables régulièrement utilisées pour rédiger un Makefile pour la
+compilation. Ces dernières sont celles utilisées par les outils de configuration des sources. Sont
+décrites ici les variables associées à des projets écrits en C ou en C++.
+
+\begin{itemize}
+\item CFLAGS : définit les options de compilation pour un programme en C
+\item CXXFLAGS : définit les options de compilation pour un programme en C++
+\item LDFLAGS : définit les options de linkage pour un programme en C ou C++
+\item TARGET : définit le nom du binaire produit par les sources
+\item SOURCES : liste les fichiers sources du projet
+\item OBJECTS : liste les fichiers objets du projet
+\item HEADERS : liste les en-têtes du projet
+\item CC : le compilateur C, en chemin relatif ou absolu
+\item CXX : le compilateur C++, en chemin relatif ou absolu
+\item LD : le linker, en chemin relatif ou absolu
+\item AS : l'assembleur, en chemin relatif ou absolu
+\end{itemize}
+
+\paragraph{}
+Il existe d'autres variables, mais les principales sont définies ici. On en retrouve une liste plus
+grande dans le script \ref{lst:mak_all}.
+
 \subsection{Les subtilités des nom de cibles}
 
 \paragraph{}
@@ -434,4 +459,22 @@ install : $(TARGET)
 
 \section{Les limitations}
 
-\section{Ce qu'il ne faut pas faire}
+\paragraph{}
+Le système de Makefile possède un certain nombre de limitations et de problématiques. En premier
+lieu, il ne permet pas, de manière aisée, de vérifier les capacités de la chaîne de compilation.
+Ainsi, lorsque l'on définit certaines variables comme CFLAGS, on prend comme hypothèse que la
+chaîne de compilation les reconnais.\\
+Cependant, en faisant ainsi, on se heurte parfois à des problèmes de portabilité. En effet, il
+arrive fréquement que le projet soit compilé avec une chaîne de compilation dont on ne maîtrise pas
+les versions du compilateurs ou encore du linker. Ainsi, selon la version utilisée, les options de
+compilation définies dans le Makefiles peuvent ne pas être reconnues, et provoquer un arrêt de la
+construction du projet.\\
+Il en vas de même pour la vérification de la présence des divers binaires nécessaires à la
+production. Il est possible de définir des fonctions de vérification dans le Makefile, mais elles
+sont à écrire par l'utilisateur et peuvent être nombreuses. C'est pour cette raison qu'on utilise
+souvent, en complément du système de Makefiles un système de configuration, comme les {\it
+autotools}\index{autotools} ou encore {\it CMake}\index{CMake}\\
+Les autotools étant le plus fréquement utilisés (ils sont à l'origine de la commande {\tt
+configure} que l'on exécute régulièrement lors de l'installation d'un applicatif à partir de ses
+sources) car plus anciens. Ce document s'intéresse dans le chapitre suivant à leur fonctionnement
+général.
