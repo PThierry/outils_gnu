@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:52 2010 Philippe THIERRY
-%% Last update Thu Sep  9 16:34:49 2010 Philippe THIERRY
+%% Last update dim. 12 sept. 2010 12:14:39 CEST Philippe THIERRY
 %%
 
 \chapter{Les outils de configurations des sources}
@@ -22,16 +22,16 @@ employé}
 \paragraph{}
 La production d'un logiciel nécessite un certain nombre de bibliothèques et d'outils dont il est
 plus prudent d'en vérifier la présence avant la production effective. De même, il peut être
-nécessaire, dans certains cas, de vérifier les capacités des outils de compilations afin de
+nécessaire, dans certains cas, de vérifier les capacités des outils de compilation afin de
 déterminer les options qu'il faut leur fournir.\\
 Ce type de vérification, bien que faisable dans le cadre d'un Makefile, n'est pas prévu pour être
-simplifié ou automatisé. C'est là qu'intervient les outils de configuration des sources et du
+simplifié ou automatisé. C'est là qu'interviennent les outils de configuration des sources et du
 système de production, permettant de fournir aux Makefiles toutes les informations nécessaires au
 bon fonctionnement de la production.\\
-Un autre point non pris en compte par les Makefile est le processus de packaging. Il s'agit de
+Un autre point non pris en compte par les Makefiles est le processus de packaging. Il s'agit de
 pouvoir construire de manière simple une archive, dans un format le plus générique possibe (en
 général il s'agit du format {\tt .tar.gz}, supporté par toute installation minimum d'un Linux ou
-d'un unix (*BSD par exemple) et compatible de toutes les plateformes embarquées.\\
+d'un unix (*BSD par exemple) et compatible de toutes les plateformes embarquées).\\
 Cette archive doit être autosuffisante : il ne doit rien lui manquer pour pouvoir construire le
 logiciel associé, du moment que les outils de production sont présents.
 
@@ -39,20 +39,21 @@ logiciel associé, du moment que les outils de production sont présents.
 Un exemple simple est celui de la construction de la documentation. Comme vu dans le chapitre
 précédant, il existe régulièrement une cible {\tt doc} dans le Makefile racine, permettant de
 construire la documentation.\\
-Cette documentation est parfois rédigée en \LaTeX, ce qui implique de posséder le compilateur LaTeX
+Cette documentation est parfois rédigée en \LaTeX, ce qui implique la présence du compilateur LaTeX
 et les bibliothèques associées. Ces outils ne sont pas nécessairement présents sur une installation
 Linux standard, et il devient important de vérifier leur présence afin de fournir à l'utilisateur un
 message compréhensible lui demandant de les installer. A défaut, le Makefile produira un message de
 type {\tt file not found} et renverra une erreur, pas forcément simple à lire.
 
 
-\section{Les limite de la configuration : problématique de la cross-compilation}
+\section{Les limites de la configuration : problématique de la cross-compilation}
 
 \paragraph{}
 Le système de configuration est capable de fournir un grand nombre d'informations. Le tableau
 \ref{tab:config_info} donne une liste d'éléments que ce dernier peut fournir en entrée de la
 production.
 
+\begin{table}
 \begin{tabular}{|l|}
 \hline
 {\it Informations récupérables par l'outil de configuration des sources}\\
@@ -64,7 +65,7 @@ Les options que supporte le compilateur, le préprocesseur, le linker \\
 \hline
 La taille d'un integer, d'un long, d'un double, d'un pointeur \\
 \hline
-La présence de divers headers du langage de programation du projet \\
+La présence de divers headers du langage de programmation du projet \\
 \hline
 Pour une bibliothèque donnée, la présence de diverses fonctions du langage de programation du projet \\
 \hline
@@ -75,30 +76,33 @@ des valeurs de CFLAGS, LDFLAGS personnalisées en fonction des informations trouv
 des éléments de configuration pour la production et l'installation du binaire (emplacement, etc) \\
 \hline
 \end{tabular}
+\caption{Les informations fournies par l'outil de configuration des sources}
+\label{tab:config_info}
+\end{table}
 
 \paragraph{}
-Parmis toutes les capacités du système de configuration, certaines ne sont pas nécessairement bonnes
-à utiliser. C'est entre autre le cas des information sur la taille en octets des types numériques.\\
-En effet, lorsque l'on fait de la cross compilation, c'est en général sur une plateforme donnée pour une
+Parmi toutes les capacités du système de configuration, certaines ne sont pas nécessairement bonnes
+à utiliser. C'est entre autre le cas des informations sur la taille en octets des types numériques.\\
+En effet, lorsque l'on fait de la cross-compilation, c'est en général sur une plateforme donnée pour une
 autre. Par exemple, on cross-compile sur une architecture Intel IA32 pour un processeur ARM.
 
 \paragraph{}
 Lorsque le système de production récupère les informations sur les tailles de type, il le fait sur
 la plateforme locale, non sur la plateforme cible. Il n'a d'ailleurs aucune possibilité de
 connaître,  au moment de la compilation, les propriétés de la plateforme cible. Ainsi, on considère
-qu'un système de configuration des sources ne doit aider que pour vérifier les éléments nécessaire à
+qu'un système de configuration des sources ne doit aider que pour vérifier les éléments nécessaires à
 la production, en aucun cas à l'exécution. On va donc vérifier la présence des différents binaires,
 headers et fonctions nécessaires à la compilation, et on laissera au développeur le soin
 d'implémenter son code de manière portable, sans avoir besoin de s'appuyer sur des informations que
 pourrait lui fournir le système de configuration lors de l'implémentation du logiciel.
 
-\section{Généralité sur la structure des autotools}
+\section{Généralités sur la structure des autotools}
 
 \subsection{Le fichier configure.ac}
 
 \paragraph{}
 Le fichier {\tt configure.ac} est au c{\oe}ur de la configuration des sources. C'est dans ce fichier qu'on
-déclare le nom du projet, ça version, la structure des sources, la position des différents Makefiles
+déclare le nom du projet, sa version, la structure des sources, la position des différents Makefiles
 et les éléments que l'on souhaite faire vérifier par le système de configuration.\\
 Le script \ref{lst:config_ac} est un exemple complet de fichier {\tt configure.ac}.
 
@@ -128,7 +132,7 @@ AC_ISC_POSIX
 AC_PROG_CC
 # verifier le support du C ANSI
 AM_PROG_CC_STDC
-# verifier la presence des header pour le C ANSI
+# verifier la presence des headers pour le C ANSI
 AC_HEADER_STDC
 # verifie le support des mots clefs const, inline et volatile, ou suppression
 # de ces mots clefs lors de la compilation
@@ -146,11 +150,11 @@ AC_CHECK_HEADER([errno.h],,AC_MSG_ERROR([Cannot find errno.h ! Check your instal
 AC_CHECK_HEADER([string.h],,AC_MSG_ERROR([Cannot find string.h ! Check your installation !]))
 AC_CHECK_HEADER([sys/stat.h],,AC_MSG_ERROR([Cannot find sys/stat.h ! Check your installation !]))
 
-# verification l'accessibilite de certaines fonctions
+# verification de l'accessibilite de certaines fonctions
 AC_CHECK_FUNCS([strndup strncpy strdup strcat strcpy dup dup2 sigaction \
 sigprocmask htons htonl snprintf sprintf fcntl])
 
-# checking sizeofs (attention ! incompatible de la cross compilation !)
+# checking sizeofs (attention ! incompatible avec la cross compilation !)
 AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([long])
 AC_CHECK_SIZEOF([long long])
@@ -224,36 +228,6 @@ AC_PROG_LIBTOOL
 # demande d'utiliser l'utilitaire install pour la cible d'installation du projet
 AC_PROG_INSTALL
 
-# verification de la presence du binaire doxygen
-AC_CHECK_PROG([DOXYGEN], [doxygen], [yes], [no])
-if test X$DOXYGEN = "X:"; then
-  AC_MSG_WARN([Unable to detect doxygen in your path. You will not be able \
-  to generate libcommon developpement documentiation.], 2)
-  doxygen="no";
-else
-  doxygen="yes";
-fi
-
-# verification de la presence du binaire dot
-AC_CHECK_PROG([DOT], [dot], [yes], [no])
-if test X$DOT = "X:"; then
-  AC_MSG_WARN([Unable to detect dot in your path. You will not be able \
-  to generate libcommon developpement documentiation.], 2)
-  dot="no";
-else
-  dot="yes";
-fi
-
-# verification de la presence du binaire python
-AC_CHECK_PROG([PYTHON], [python], [yes], [no])
-if test X$PYTHON = "X:"; then
-  AC_MSG_WARN([Unable to detect python in your path. You will not be able \
-  to generate libcommon test framework results for profiling.], 2)
-  python="no";
-else
-  python="yes";
-fi
-
 # verification de la presence du binaire sloccount
 AC_CHECK_PROG([SLOCCOUNT], [sloccount], [yes], [no])
 if test X$SOCCOUNT = "X:"; then
@@ -304,16 +278,6 @@ else
   latex="yes";
 fi
 
-# verification de la presence du binaire htlatex
-AC_CHECK_PROG([HTLATEX], [htlatex], [yes], [no])
-if test X$HTLATEX = "X:"; then
-  AC_MSG_WARN([Unable to detect htlatex in your path. You will not be able \
-  to generate web part of libcommon architecture documentation.], 2)
-  htlatex="no";
-else
-  htlatex="yes";
-fi
-
 #############################################################################
 # Checking specific arguments presence                                      #
 #############################################################################
@@ -352,10 +316,6 @@ CFLAGS="$CFLAGS -O2 $DEBUG -DLINUX -D_XOPEN_SOURCE=600 -DMEMTRACE -std=c99 $WARN
 #############################################################################
 # Finishing. Specify new conditionnals and Makfiles                         #
 #############################################################################
-# creation d'une variable, HTLATEX, qui sera passée à tous les Makefiles, avec
-# comme contenu le résultat du test ci-dessous
-AM_CONDITIONAL(HTLATEX, test x$htlatex = xyes)
-
 # liste des Makefiles à generer à partir des fichiers Makefile.am (confer plus loin)
 AC_CONFIG_FILES([
 Makefile
@@ -411,12 +371,8 @@ echo -- compilation needs are all OK;
 echo;
 echo -- documentation needs :;
 echo latex found....................... $latex;
-echo htlatex found..................... $htlatex;
-echo Doxygen found..................... $doxygen;
-echo Dot found......................... $dot;
 echo;
 echo -- test framework needs :;
-echo Python found...................... $python;
 echo Sloccount found................... $sloccount;
 echo Gprof found....................... $gprof;
 echo Gcov found........................ $gcov;
@@ -440,16 +396,16 @@ fichier préexistant et l'adapter pour un nouveau projet.
 \paragraph{}
 Dans le fichier {\tt configure.ac} sont déclarés un certain nombre de fichiers {\tt Makefile}. Ces
 derniers ne sont pas directement écrits par le développeur, mais générés à partir de fichiers
-nommés {\tt Makefile.am} ({\it am} pour automake). Ces derniers ont une syntaxe proches du
+nommés {\tt Makefile.am} ({\it am} pour automake). Ces derniers ont une syntaxe proche du
 Makefile, mais fournissent un certain nombre de mots clefs rendant plus simple la rédaction des
 Makefiles.
 
-Dans le chapitre précédant, un fichier Makefile type est décrit. Le script \ref{lst:mak_am} décrit
+Dans le chapitre précédent, un fichier Makefile type est décrit. Le script \ref{lst:mak_am} décrit
 un fichier Makefile.am générant un fichier Makefile plus riche encore, mais avec une syntaxe plus
 lisible.
 
 \begin{lstlisting}[caption={Structure type d'un fichier Makefile.am},label=lst:mak_am]
-# les cibles standards doivent d'abord s'exécuter dans le sous-reperoire lib, puis dans le
+# les cibles standards doivent d'abord s'executer dans le sous-repertoire lib, puis dans le
 # repertoire courant
 SUBDIRS = lib .
 
@@ -472,7 +428,7 @@ noinst_HEADERS = main.h
 # liste des programmes de test a executer par la cible 'check'
 TESTS		= test other_test.pl
 
-# parmis les programmes de test, il y en a un a compiler
+# parmi les programmes de test, il y en a un a compiler
 check_PROGRAMS	= test
 
 # source du binaire 'test'
@@ -493,7 +449,7 @@ foobar:
 
 \paragraph{}
 Comme le montre le script \ref{lst:mak_am}, les cibles du Makefile qui sera généré ne sont pas
-définies explicitement, mais construite à partir des informations fournie dans le fichier {\tt
+définies explicitement, mais construites à partir des informations fournies dans le fichier {\tt
 Makefile.am}. Il reste cependant possible de définir des cibles supplémentaires en cas de besoin.
 
 \paragraph{}
@@ -505,10 +461,10 @@ principales règles qui sont créées dans tous les Makefiles :
 \item all : produit le ou les programmes du projet
 \item check : compile si besoin et exécute les programmes de test
 \item dist : construit une archive autonome à partir du répertoire projet
-\item distcheck : construit une archive, et vérifie sont bon fonctionnement en la désarchivant et
+\item distcheck : construit une archive, et vérifie son bon fonctionnement en la désarchivant et
 en exécutant le fichier configure et les cibles check du répertoire où elle est désarchivée.
-\item clean : détruit les fichiers temporaire (fichiers objets, etc)
-\item distclean : détruit les programmes et élément finaux construits
+\item clean : détruit les fichiers temporaires (fichiers objets, etc.)
+\item distclean : détruit les programmes et éléments finaux construits
 \item doc : construit la documentation
 \end{itemize}
 
@@ -528,8 +484,8 @@ célèbre succession de commandes {\tt ./configure; make; make install}.
 Pour construire ce fichier, ainsi qu'un certain nombre de fichiers intermédiaires, on appelle
 l'utilitaire {\tt autoreconf}. On retrouve souvent dans un projet un fichier {\tt autogen.sh},
 parfois appellé {\tt bootstrap}, qui s'occupe d'appeller cette commande. Il est cependant
-normalement pas nécessaire à l'utilisateur de l'appeller, car le fichier configure est normalement
-fournit avec les sources du projet.
+normalement pas nécessaire à l'utilisateur de l'appeller, car le fichier configure est en effet
+fourni avec les sources du projet.
 
 \paragraph{}
 L'ensemble des vérifications décrites plus haut sont faite au moment où est exécuté le fichier
@@ -540,13 +496,13 @@ qu'il vérifie.
 
 \paragraph{}
 Le système de production des autotools est en réalité un peu plus complexe que ce qui est décrit
-dans ce chapitre, comme l'indique la figure \ref{fig:autoconf}. Cependant, les éléments de ce
+dans ce chapitre, comme l'indique la figure \ref{fig:autoconf}. Néanmoins, les éléments de ce
 chapitre sont suffisant pour apréhender les problèmes dont les autotools pouraient être la cause
 dans l'emploi de paquets source de logiciels open-source.
 
 \begin{figure}[ht]
 \begin{center}
-\includegraphics[width=6cm]{pictures/autoconf}
+\includegraphics[width=7.5cm]{pictures/autoconf}
 \end{center}
 \label{fig:autoconf}
 \caption{Etapes successives de la configuration d'un projet}
@@ -555,7 +511,7 @@ dans l'emploi de paquets source de logiciels open-source.
 
 \paragraph{}
 Ce que l'on peut conclure de ce chapitre est que les outils de configuration des sources comme les
-autotools sont très puissants, mais complexe à comprendre du fait de leur richesse.\\
+autotools sont très puissants, mais complexes à comprendre du fait de leur richesse.\\
 Cependant, du fait de leur usage très fréquent, ils restent incontournables dès qu'il est
 nécessaire de considérer des projets au format sources, que ce soit pour créer un projet ou pour
 construire un environnement embarqué.

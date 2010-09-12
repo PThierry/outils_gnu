@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:34 2010 Philippe THIERRY
-%% Last update Thu Sep  9 15:14:26 2010 Philippe THIERRY
+%% Last update dim. 12 sept. 2010 11:44:36 CEST Philippe THIERRY
 %%
 
 \chapter{La commande GNU Make}
@@ -28,19 +28,19 @@ gros logiciels, et quelles sont les problématiques qui en découlent}
 
 \paragraph{}
 Le système de Makefile a été créé dans le but de simplifier la production d'un logiciel. Il
-s'articule autour de fichiers de configuration, nommés {\texttt Makefile}, qui définissent les
+s'articule autour de fichiers de configuration, nommés {\tt Makefile}, qui définissent les
 différents éléments des sources et le traitement qui leur est associé.\\
-Ces fichiers de configuration sont traité par le binaire {\texttt make}, qui existe en plusieurs
+Ces fichiers de configuration sont traités par le binaire {\tt make}, qui existe en plusieurs
 versions, dont les célèbres BSD Make et GNU Make. Sous Linux, c'est le make de la GNU qui est
 installé par défaut. Cette version intègre des capacités supplémentaires par rapport au make de BSD,
-ce qui peut parfois rendre les Makefiles non portables si ils utilisent ces fonctionnalités.
+ce qui peut parfois rendre les Makefiles non portables s'ils utilisent ces fonctionnalités.
 
 \subsection{Les cibles et les dépendances}
 
 \paragraph{}
-Dans un fichier Makefile, on appelle {\it cible} (target) un ensemble de traitement réunis sous un
+Dans un fichier Makefile, on appelle {\it cible} (target) un ensemble de traitements réunis sous un
 même nom.\\
-Cette cible est appellable comme argument de la commande {\texttt make}, impliquant l'exécution de
+Cette cible est appellable comme argument de la commande {\tt make}, impliquant l'exécution de
 la cible demandée :
 \begin{lstlisting}[caption={Appeler une cible spécifique dans un Makefile},label=lst:call_target]
 sh$ make -j 2 ma_cible
@@ -56,9 +56,9 @@ ma_cible:
 \end{lstlisting}
 
 \paragraph{}
-Le nom d'une cible doit être écrite en un seul mot, et doit être impérativement seule avant les
+Le nom d'une cible doit être écrit en un seul mot, et doit être impérativement seul avant les
 deux points. Il est possible de lui préciser des dépendances après les deux points, comme un
-ensemble d'autre cibles qui seront appellées dans l'ordre d'écriture.
+ensemble d'autres cibles qui seront appellées dans l'ordre d'écriture.
 
 \paragraph{}
 Tous les traitements exécutés par une cible s'écrivent en commençant par le caractère tabulation,
@@ -67,8 +67,8 @@ tabulation.\\
 Une ligne blanche indique la fin de la cible en cours.
 
 \paragraph{}
-Comme dit précédement, une cible peut avoir des dépendances envers d'autres cibles. Cela s'écrit
-simplement comme une suite de cibles à droite du deux points:
+Comme dit précédemment, une cible peut avoir des dépendances envers d'autres cibles. Cela s'écrit
+simplement comme une suite de cibles à droite des deux points:
 \begin{lstlisting}[caption={Définir des dépendances entres cibles de Makefile},label=lst:mak1]
 prepare:
 	touch fichier1
@@ -83,8 +83,8 @@ ma_cible: prepare get_info
 \end{lstlisting}
 
 \paragraph{}
-en demandant l'exécution de la cible {\it ma\_cible}, la commande make va successivement exécuter,
-dans cette ordre, les cibles {\it prepare}, {\it get\_info}, et {\it ma\_cible}.
+En demandant l'exécution de la cible {\it ma\_cible}, la commande make va successivement exécuter,
+dans cet ordre, les cibles {\it prepare}, {\it get\_info}, et {\it ma\_cible}.
 
 \paragraph{}
 Comme on le voit dans cette section, le système de Makefile ne sert pas uniquement à automatiser la
@@ -107,19 +107,19 @@ variable en fonction du besoin.
 Une variable de Makefile s'écrit par convention en majuscule. Sa définition peut se faire de trois
 manières, comme l'indique le script \ref{lst:makvar}.
 
-\begin{lstlisting}[caption={Les variables dans les Makefile},label=lst:makvar]
+\begin{lstlisting}[caption={Les variables dans les Makefiles},label=lst:makvar]
 VAR = foo
 VAR ?= foo
 VAR += foo
 \end{lstlisting}
 
 \paragraph{}
-Les trois manières d'assigner une valeur à une variables sont, dans l'ordre d'apparition :
+Les trois manières d'assigner une valeur à une variable sont, dans l'ordre d'apparition :
 \begin{enumerate}
 \item la variable {\it VAR} vaut {\tt foo}
 \item la variable {\it VAR} vaut {\tt foo} uniquement si elle n'existe pas déjà. Si cette dernière
 est déjà existante dans le contexte d'exécution du Makefile, elle n'est pas modifiée.
-\item la variable {\it VAR} voit sa valeur concatènée avec la valeur en argument, un espace
+\item la variable {\it VAR} voit sa valeur concaténée avec la valeur en argument, un espace
 séparant les deux valeurs.
 \end{enumerate}
 
@@ -134,9 +134,9 @@ DATE = $(date +"%d-%M-%Y")
 \subsection{Les structures de contrôle}
 
 \paragraph{}
-Il existe des structure de contrôle dans le langage des Makefiles. Elle permette de faire de ne
-prendre en compte qu'une partie du Makefile en fonction de le valeur d'une donnée, ce qui permet
-par exemple de faire dépendre un traitement d'un élément extérieur.
+Il existe des structures de contrôle dans le langage des Makefiles. Elles permettent de ne
+faire prendre en compte, par l'outil {\tt make}, qu'une partie du Makefile en fonction de la valeur
+d'une donnée. Cela permet, par exemple, de faire dépendre un traitement d'un élément extérieur.
 
 \begin{lstlisting}[caption=Les structures de contrôles des Makefiles,label=lst:mak_ctrl]
 CFLAGS=-W -ggdb
@@ -151,7 +151,7 @@ compile:
 \end{lstlisting}
 
 \paragraph{}
-Le script \ref{lst:mak_ctrl} peux donc générer deux appels au compilateur. Un appel classique à
+Le script \ref{lst:mak_ctrl} peut donc générer deux appels au compilateur. Un appel classique à
 {\tt make compile} exécute la commande suivante :\\
 \begin{lstlisting}
 gcc -W -ggdb my_file.c -o foo
@@ -167,7 +167,7 @@ est cependant possible d'utiliser les structures de contrôle pour encapsuler des
 en fonction du besoin.
 
 \paragraph{}
-Il existe d'autres structures de contrôle dans le langage des Makefile. Il s'agit des
+Il existe d'autres structures de contrôle dans le langage des Makefiles. Il s'agit des
 déclarations:\\
 \begin{itemize}
 \item {\tt ifneq-else-endif}, qui se base sur un test faux d'égalité
@@ -179,7 +179,7 @@ déclarations:\\
 \subsection{La récursivité}
 
 \paragraph{}
-Comme vu précédement, les sources d'un projet contient plusieurs répertoire. Par convention, un
+Comme vu précédemment, les sources d'un projet contiennent plusieurs répertoires. Par convention, un
 Makefile donné ne traite que du répertoire dans lequel il est présent. Ainsi, on rédige non pas un
 seul mais plusieurs Makefiles, avec un seul Makefile dit {\it racine}, se chargeant d'appeller les
 autres en fonction du besoin.
@@ -200,10 +200,10 @@ autres en fonction du besoin.
 
 \paragraph{}
 Par convention, le Makefile se trouvant à la racine du répertoire est dit Makefile {\it racine}.
-C'est lui qui se chargera d'appeller les autres Makefile en fonction du besoin. En effet, le
-développeur et plus généralement l'utilisateur du logiciel n'a pas à connaître la décomposition des
-sources du logiciel pour le construire. Seul les commandes fournies par le Makefile de la racine
-doivent suffirent à compiler l'ensemble. En considérant le réperoire projet
+C'est lui qui se chargera d'appeller les autres Makefiles en fonction du besoin. En effet, le
+développeur, et plus généralement l'utilisateur du logiciel, n'a pas à connaître la décomposition des
+sources du logiciel pour le construire. Seules les commandes fournies par le Makefile de la racine
+doivent suffire à compiler l'ensemble. En considérant le réperoire projet
 \ref{lst:mak_directory}, le Makefile de la racine serait proche de celui donné dans le script
 \ref{lst:root_mak}\\
 
@@ -228,17 +228,17 @@ doc.
 \subsection{Construire des éléments communs à tous les Makefile}
 
 \paragraph{}
-In arrive qu'un certain nombre d'éléments puissent être redondant parmis les différents Makefiles.
+Il arrive qu'un certain nombre d'éléments puissent être redondants parmis les différents Makefiles.
 Il peut s'agir de variables ou de cibles. Plutôt que de réécrire ces éléments dans chaque Makefile
-avec un risque d'inconcistance, il est possible d'écrire un sous ensemble du Makefile dans un
+avec un risque d'inconcistance, il est possible d'écrire un sous-ensemble du Makefile dans un
 fichier qui sera intégré dans les différents Makefiles du projet.
 
 \paragraph{}
-Par convention, ces makefiles ont une extention de fichier {\tt .mk}. Il n'y a pas de convention
-sur leur nom et peuvent être appellé de différentes manières.
+Par convention, ces Makefiles ont une extention de fichier {\tt .mk}. Il n'y a pas de convention
+sur leur nom et peuvent être appellés de différentes manières.
 
 \paragraph{}
-Afin d'include un (ou plusieurs) de ces fichier dans un Makefile, on utilise la directive {\tt
+Afin d'inclure un (ou plusieurs) de ces fichiers dans un Makefile, on utilise la directive {\tt
 include}.
 Le script \ref{lst:mak_mk} est un exemple de fichier {\tt .mk}.
 
@@ -250,7 +250,7 @@ AUTHOR="Dave Null"
 
 Le script \ref{lst:mak_include} donne un exemple de ligne d'inclusion d'un tel fichier.
 
-\begin{lstlisting}[caption={inclusion d'un fichier mk dans un Makefile},label=lst:mak_include]
+\begin{lstlisting}[caption={Inclusion d'un fichier mk dans un Makefile},label=lst:mak_include]
 include infos.mk
 
 PROJDIR=$(PROJECTNAME)-$(PROJECTVERSION)
@@ -269,7 +269,7 @@ init:
 Il a été vu précédement que le système de Makefile fournit une base simple et efficace pour
 automatiser des traitements, et ce de toute nature.\\
 Cependant, l'élément pour lequel les Makefiles prennent tout leur sens et fournissent le plus de
-capacités est l'automatisation de la production. On parle ici bien de production et non simplement
+capacités est l'automatisation de la production. On parle bien ici de production et non simplement
 de compilation, qui n'est en réalité qu'un de ses multiples aspects, avec la génération de docs,
 l'exécution des campagnes de tests, ou encore l'installation de l'applicatif.
 
@@ -285,10 +285,10 @@ est régulièrement utilisée dans la rédaction des cibles de compilation.
 \end{itemize}
 
 \paragraph{}
-Un autre élément très utile des Makefile et l'aspect traitement de chaine de caractère lors de la
+Un autre élément très utile des Makefiles est l'aspect traitement de chaîne de caractère lors de la
 définition d'une variable, dont la syntaxe est ressemblante à celle du {\it bash}.\\
 Ainsi, on peut, à partir d'une variable ayant une chaîne de caractère donnée, la modifier comme on
-le souhaite pour définir d'autres variables. Un exemple étant toujours mieux qu'un long discrours,
+le souhaite pour définir d'autres variables. Un exemple étant toujours mieux qu'un long discours,
 voici un exemple d'emploi permettant, pour une chaîne donnée, de remplacer une sous-chaîne par une
 autre :\\
 \begin{lstlisting}[caption={Traitement de chaînes de caractères dans les Makefiles},label=lst:mak_glob]
@@ -297,14 +297,14 @@ OBJ = $(SOURCE:.c=.o) # ici, OBJ vaut main.o
 ASM = $(SOURCE:.c=.s) # ici ASM vaut main.s
 \end{lstlisting}
 
-L'intérêt principale et de définir la chaîne à un seul endroit, pour en dériver sa valeur ensuite.
+L'intérêt principal est de définir la chaîne à un seul endroit, pour en dériver sa valeur ensuite.
 Cela permet d'éviter une inconsistance en définissant plusieurs fois la chaîne complète.
 
 \subsection{Les variables de compilation}
 
 \paragraph{}
 Il existe un certain nombre de variables régulièrement utilisées pour rédiger un Makefile pour la
-compilation. Ces dernières sont celles utilisées par les outils de configuration des sources. Sont
+compilation. Ces dernières sont celles employées par les outils de configuration des sources. Sont
 décrites ici les variables associées à des projets écrits en C ou en C++.
 
 \begin{itemize}
@@ -340,8 +340,8 @@ Afin d'en comprendre le sens, voici son usage:
 \end{lstlisting}
 Cette cible est faite pour la compilation des fichiers sources en fichiers objets. Cette règle
 prend en entrée les fichiers se terminant par l'extension {\tt .c} définis plus haut dans le
-makefile et les intègre à la variable {\tt \$<} pour pouvoir être utilisés.\\
-Dans le script \ref{lst:mak_all}, cette règle est utiliser pour générer les fichiers objets à
+Makefile et les intègre à la variable {\tt \$<} pour pouvoir être utilisés.\\
+Dans le script \ref{lst:mak_all}, cette règle est utilisée pour générer les fichiers objets à
 partir des sources. L'ensemble des fichiers sources sont intégrés à la variable {\tt \$<} qui est
 utilisée dans la règle écrite pour cette cible.
 
@@ -352,7 +352,7 @@ utilisée dans la règle écrite pour cette cible.
 Il arrive parfois qu'un fichier ou un dossier du répertoire courant porte le même nom qu'une cible.
 C'est en général le cas de {\it doc}.\\
 Le problème est que le système de Makefile considère que si le nom d'une cible porte le nom d'un
-fichier ou d'un répertoire, ce dernier est la conséquence de la cible elle même. En conséquence, si
+fichier ou d'un répertoire, ce dernier est la conséquence de la cible elle-même. En conséquence, si
 ce dernier est préexistant lors de l'appel à cette cible et que cette dernière ne possède pas de
 dépendance, alors elle ne sera pas exécutée.\\
 Dans l'exemple d'une cible {\tt doc}, où le répertoire doc est déjà présent dans le répertoire
@@ -463,18 +463,18 @@ install : $(TARGET)
 Le système de Makefile possède un certain nombre de limitations et de problématiques. En premier
 lieu, il ne permet pas, de manière aisée, de vérifier les capacités de la chaîne de compilation.
 Ainsi, lorsque l'on définit certaines variables comme CFLAGS, on prend comme hypothèse que la
-chaîne de compilation les reconnais.\\
+chaîne de compilation les reconnaît.\\
 Cependant, en faisant ainsi, on se heurte parfois à des problèmes de portabilité. En effet, il
-arrive fréquement que le projet soit compilé avec une chaîne de compilation dont on ne maîtrise pas
-les versions du compilateurs ou encore du linker. Ainsi, selon la version utilisée, les options de
-compilation définies dans le Makefiles peuvent ne pas être reconnues, et provoquer un arrêt de la
+arrive fréquemment que le projet soit compilé avec une chaîne de compilation dont on ne maîtrise pas
+les versions du compilateur ou encore du linker. Ainsi, selon la version utilisée, les options de
+compilation définies dans le Makefile peuvent ne pas être reconnues, et provoquer un arrêt de la
 construction du projet.\\
-Il en vas de même pour la vérification de la présence des divers binaires nécessaires à la
+Il en va de même pour la vérification de la présence des divers binaires nécessaires à la
 production. Il est possible de définir des fonctions de vérification dans le Makefile, mais elles
 sont à écrire par l'utilisateur et peuvent être nombreuses. C'est pour cette raison qu'on utilise
-souvent, en complément du système de Makefiles un système de configuration, comme les {\it
-autotools}\index{autotools} ou encore {\it CMake}\index{CMake}\\
-Les autotools étant le plus fréquement utilisés (ils sont à l'origine de la commande {\tt
+souvent, en complément du système de Makefiles, un système de configuration, comme les {\it
+autotools}\index{autotools} ou encore {\it CMake}\index{CMake}.\\
+Les autotools étant le plus fréquemment utilisés (ils sont à l'origine de la commande {\tt
 configure} que l'on exécute régulièrement lors de l'installation d'un applicatif à partir de ses
 sources) car plus anciens. Ce document s'intéresse dans le chapitre suivant à leur fonctionnement
 général.
