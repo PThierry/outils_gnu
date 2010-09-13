@@ -6,18 +6,19 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:08:07 2010 Philippe THIERRY
-%% Last update dim. 12 sept. 2010 12:17:54 CEST Philippe THIERRY
+%% Last update lun. 13 sept. 2010 09:38:58 CEST Philippe THIERRY
 %%
 
 \chapter{Les outils de test et de profiling des applicatifs}
 
-FIXME: A RELIRE ET REFORMULER !!!\\
 
-{\it Ce chapitre décrit les différents logiciels qui permettent de valider le comportement de
-l'élément produit, et décrit comment, dans le domaine industriel, sont considérés les éléments de
-validation et de profiling.\\
-Ces éléments de durcissement du logiciel implémentés sont très importants dans les domaines de
-l'embarqué critique, du temps réel ou encore de la sécurité.}
+{\it Ce chapitre décrit les différents logiciels qui permettent de valider
+le comportement de l'élément produit. Il décrit comment, dans le domaine
+industriel, sont considérés les outils et mesures de validation et de
+profiling.\\
+Ces méthodes de durcissement du logiciel sont très importantes dans les
+domaines de l'embarqué critique, du temps réel ou encore de la sécurité
+car ils sont à l'origine de la qualité logicielle.}
 
 \section{Du travail de développeur à l'ingénieur en génie logiciel}
 
@@ -27,148 +28,131 @@ précédents, il  convient de mettre en  {\oe}uvre d'autres  outils afin de
 s'assurer de la bonne qualité des logiciels.
 
 \paragraph{}
-Le  concept  de qualité logicielle doit   être instanciée sur plusieurs
-axes    au prorata des  objectifs  a  atteindre.  Parmi les différents
-critères que l'on   peut retenir et qui  sont  accessibles de  manière
-assez simple on peur citer :
+Le  concept  de qualité logicielle doit   être instancié sur plusieurs
+axes    au prorata des  objectifs  à  atteindre.  Parmi les différents
+critères que l'on   peut retenir, on peur citer :
 
 \begin{itemize}
-\item le taux  de commentaire\\
-C'est en effet  un point important, car  au
-delà  du langage utilisé, le logiciel  produit doit être commenté afin
-d'expliquer   soit des formules,    soit des constructions logicielles
-particulières.   Il faut considérer à  ce  niveau qu'un logiciel -afin
-d'être maintenable-  doit  pouvoir être amélioré, maintenu  et corrigé
-par  des individus qui   n'ont    pas nécessairement le même    niveau
-d'expertise  que  l'auteur  original  ni non   plus   la même approche
-concernant  la conception du logiciel.  Une  manière simple de mesurer
-les  commentaires consiste à évaluer  le  rapport  entre le  nombre de
-lignes  de code  et le nombre  de  lignes de   commentaire.  Un valeur
-correcte de  30\% est acceptable,   sous réserve  que les  commentaires
-soient pertinents, ce qui hélas n'est pas aisé à mesurer d'une manière
-automatique.
+\item {\bf le taux  de commentaire}\\
+C'est un point important, car  au delà  du langage utilisé, le logiciel
+produit doit être commenté afin d'expliquer   soit des formules,
+soit des constructions logicielles particulières.   Il faut considérer
+à  ce  niveau qu'un logiciel doit  pouvoir être amélioré, maintenu  et
+corrigé par  des individus qui   n'ont    pas nécessairement les mêmes
+niveaux d'expertise  que  le ou les auteur(s)  original(aux). Ils n'ont
+pas non   plus forcément la même approche de la conception du
+logiciel.\\
+Une  manière simple de mesurer les  commentaires consiste à évaluer  le
+rapport  entre le  nombre de lignes  de code  et le nombre  de  lignes de
+commentaires.  Une valeure correcte de  30\% est acceptable,   sous réserve
+que les  commentaires soient pertinents, ce qui hélas n'est pas aisé à
+mesurer de manière automatique.
 
-\item la capacité à fournir  des  tests\\
-Dans la mesure   ou il  existe  un
-logiciel  réalisant  une  fonction   particulière,  on peut s'attendre
-(hélas pas assez souvent) à  disposer de logiciels de test  permettant
-d'en assurer de manière plus  ou moins automatique la vérification. Un
-intérêt  majeur est la  capacité effectuer de  manière automatique des
-tests et vérifier ainsi la conformité à des résultats attendus avec de
-plus  une capacité à terme à  effectuer  des tests de non  régression,
-c'est à dire repasser un ensemble de tests de qualification lorsqu'une
-modification est apportée  au logiciel, que  ce soit pour  corriger un
-problème ou pour faire une évolution  fonctionnelle.\\ Il s'agit ici de
-la même idée  que dans le domaine   automobile, ou sur les  chaines de
-production  de voitures, les robots  se calibrent  tout seul, mesurent
-l'usure    de leurs outils et  vérifient   pour  chaque pièce la bonne
-conformité sur  des états de surface  ou autres  aspects de conformité
-mécanique. Dans  le  monde  du logiciel, on   appel  cela les {\it tests
-unitaires},  c'est à   dire la  capacité à  tester  et vérifier  le bon
-comportement des fonctions de bases.\\ Ainsi, selon la découpe statique
-originale du projet  en fichiers sources,  on devrait trouver au moins
-autant de fichiers source de test.  Chaque fichier source de test doit
-générer un exécutable avec pour objectif majeur d'appeler au moins une
-fois chaque  fonction du logiciel à  tester en  fournissant un jeux de
-paramètres et  en mesurant que  pour chaque jeux d'essais, le résultat
-attendue et conforme.  Bien évidement,  de telles pratiques  sont très
-coûteuse   dans  le    mesure ou    pour une  seule      ligne de code
-opérationnelle, on  va devoir générer environ  de 3 à 10 fois  plus de
-lignes de code de test, dans le but d'assurer tous les cas de test.  A
-ce niveau,  on peut se poser la  question de savoir si  c'est  3 ou 10
-fois plus... Quel   est  alors le bon   chiffre  ?  Pour  répondre à  cette
-question, cela  dépend du domaine d'activité et  des enjeux du projet.
-Par exemple, dans  le  cas de systèmes critiques  (nucléaire, militaire
-satellite), il  est  demandé non  seulement  de faire des tests,  mais
-également de faire des tests  jusqu"à ce que {\it tous} les  cas de test  du
-logiciel   soient couverts.  Ceci  est   bien  définie dans une  norme
-internationale (DO178B) dont l'objectif est de caractériser de manière
-formelle  des systèmes complexes  à logiciel prépondérant.  C'est pour
-cette  raison que l'effort de   test, dans la mesure   ou il va coûter
-entre 3 et  10 fois le coût du  logiciel initial, est un aspect {\it majeur}
-et {\it critique} de certain domaines industriels.
+\item {\bf la capacité à fournir  des  tests}\\
+Dans la mesure   où il  existe  un logiciel  réalisant  une  fonction
+particulière,  on peut s'attendre à  disposer de logiciels de test
+permettant d'en assurer de manière plus  ou moins automatique la vérification.\\
+Un intérêt  majeur des tests est la  capacité à effectuer de  manière
+automatique une vérification de conformité à des résultats attendus. Ils
+fournissent de plus la possibilité à terme d'effectuer  des tests de non
+régression. Ces tests permettent, lors de l'ajout ou de la correction de
+code, de s'assurer que le logiciel continue de réussir les tests précédement
+valides. Dans le cas contraire, on parle de régression.\\
+Il s'agit ici de la même idée  que dans le domaine   automobile ou sur
+les  chaines de production  de voitures : les robots  se calibrent seuls,
+mesurent l'usure    de leurs outils et  vérifient   pour  chaque pièce la bonne
+conformité sur  des états de surface par exemple.
+Dans  le  monde  du logiciel, on parle alors de {\it tests unitaires}.\\
+Ainsi, selon la découpe statique originale du projet  en fichiers sources,
+on devrait trouver au moins un fichier de test par fichier source.  Chacun d'entre
+eux doit générer un exécutable. Ce dernier a pour objectif d'appeler au moins une
+fonction du logiciel à  tester, une ou plusieurs fois, afin de s'assurer que le résultat
+produit par cette fonction est conforme à l'attendu. On parle alors de couverture
+en {\it mode bloc}\\
+Bien évidement,  de telles pratiques  sont très coûteuse   dans  la
+mesure ou    pour une  seule      ligne de code opérationnelle, on  va
+devoir rédiger environ trois à dix fois  plus de lignes de code de test,
+dans le but de vérifier divers cas d'usage de la fonction testée.\\
+Le nombre de lignes de code de test nécessaires à valider le comportement d'une ligne de code
+opérationnelle n'est par fortuit. Il dépend de la criticité du logiciel.
+Cela  dépend du domaine d'activité et  des enjeux du projet.
+Par exemple, dans  le  cas de systèmes critiques  (nucléaire, militaire, avionique ou
+satellite), il  est  demandé de faire des tests jusqu'à ce que {\it tous}
+les  cas d'exécution de chaque ligne du logiciel   soient couverts.\\
+Ceci  est   bien  défini dans une  norme internationale appellée DO178B
+dont l'objectif est de caractériser de manière formelle  des systèmes
+complexes  à logiciels prépondérants.\\
+On peut donc conclure que selon le domaine dans lequel le logiciel est implémenté, l'effort de test
+peut être soit peu couteux, soit beaucoup plus couteux que l'effort d'implémentation du logiciel
+lui-même.
 \end{itemize}
-
-\paragraph{}
-On comprends donc que   la présence ou non  de  tests soit  un  aspect
-important de la mesure de la qualité logicielle.
 
 \section{Mesure du taux de counverture avec Gcov}
 
 \paragraph{}
+Il existe des outils pour mesurer le taux de couverture des exécutables de test décrits au dessus.
+Dans le monde open-source, il existe Gcov, qui fait parti de la suite gcc.\\
 Il s'agit d'un outil de métrologie du logiciel mode  bloc:\\
-Comme vue précédemment,  en partant
-de l'hypothèse  qu'il existe (!)   des logiciels  de test, en ajoutant
-également le fait  que ces logiciels de test  vont effectuer des tests
-de manière automatique,  il  est souhaitable  de mettre en  oeuvre des
-outils permettant de mesurer la couverture de test, à l'instar du mode
-automobile évoqué précédemment.
+Lors de l'exécution des logiciels de test, cet outil permet, en concaténant la couverture de chacun
+d'entre eux, de définir, par bloc fonctionnel, quel sous ensemble du code du logiciel cible a été
+testé.\\
+Gcov ne nécessite pas de construire un système de tests automatiques, mais c'est cependant
+fortement conseillé, car cela accélère grandement la vérification, au vue du nombre parfois grand
+de logiciels de test. De plus, cela fournit un cadre formel à l'exécution des tests.
 
 \paragraph{}
-En  effet,  considérant  que  l'on a
-investi  entre 3  et 10 le  prix  de  développement d'un  logiciel, on
-souhaite garantir et effectuer une mesure de taux de couverture. C'est
-précisément à cet instant que  l'outil {\it \index{Gcov}gcov} intervient en proposant de
-compiler d'une  manière particulière l'ensemble   des logiciels et des
-logiciels de test de façon  telle que lors  de l'exécution et après un
-post traitement il devient  possible  d'en mesurer  les blocs qui  ont
-étés ou non testés.\\
-Un bloc en  language C tant  défini comme le code
-contenu entre { et } .   Grâce à cet outil,  il devient ainsi possible
-de mesurer facilement son effort de  test, puisque pour chaque nouveau
-test écrit, on peut mesurer la  progression de la qualité du logiciel,
-en assurer la correction, puis repasser  de nouveau les tests et ainsi
-de suite ... Ceci caractérisant le cycle de vie de développement d'un
-logiciel. 
+FIXME: intégrer un histogramme lcov
 
 \paragraph{}
-Sous réserve de faire quelques efforts supplémentaires afin
-d'intégrer cet  outillage dans  le Makefile  tel que  décrit dans  les
-paragraphes  précédents,   on se  rapproche  ainsi   de  plus en  plus
-d'outillages industriels  comparables  ceux de l'industrie automobile.\\
-Un second  intrêt et pas des  moindres  est qu'il est  possible à tout
-instant d'arréter l'effort de test, donc  l'effort de cout en fonction
-du résultat atteints  au prorata de l'enjeu  du projet.  tout le monde
-ne developpe pas des logiciels pour l'aronautique !
-
+Sous réserve de faire quelques efforts supplémentaires afin d'intégrer cet  outillage dans
+le Makefile, on se  rapproche de  plus en  plus d'outillages industriels  comparables à
+ceux de l'industrie automobile par exemple.\\
+Les éléments que fournit gcov permettent de savoir si l'implémentation des campagnes de test sont
+compatibles des exigences d'entrée du logiciel. Ces dernières sont souvent définies sous forme d'un
+taux de couverture (en pourcentage). Le schéma précédent permet ainsi de savoir quand ce taux est
+atteint. En effet, faire plus de tests que demandé implique un surcoût qu'il est préférable
+d'éviter afin de respecter le devis initial.
 
 \section{Définition du profil d'exécution avec Gprof}
 
-
 \paragraph{}
-Métrologie du logiciel performance: Comme  vue précédement, en partant
-de l'hypothèse qu'il  existe  des logiciels  de  test, en ajoutant
-également le fait  que ces logiciels  de test vont effectuer des tests
-de  manière automatique, il peut être  intérresant  de profiter de cet
-effort de test pour vérifier  le comportement temporel du logiciel  en
-terme de boucles  et d'appel de  fonctions.  C'est le rôle de  l'outil
-{\texttt gprof}\index{Gprof} qui à  l'instar de {\texttt gcov} va permettre
-après un post traitement de fournir des graphes permettant d'analyser le bon
-comportement.
+Au travers de l'exécution des logiciels de test il peut être  intérresant
+de vérifier  le comportement temporel des fonctions testées  en terme de boucles
+et d'appel de  fonctions.  C'est le rôle de  l'outil {\texttt gprof}\index{Gprof}
+qui à  l'instar de {\texttt gcov} va permettre de fournir des graphes permettant
+d'analyser le bon comportement de ces dernières. Il est de plus possible de mesurer le comportement
+du logiciel lui même en simulant un environnement d'exécution représentatif du besoin.\\
+Le schéma \ref{fig:gprof} montre un arbre d'exécution d'un logiciel complet. Il indique l'abre
+d'appel des différentes fonctions, ainsi que pour chacune, le nombre d'appels et le coût relatif à
+la durée d'exécution de chaque fonction. Cela permet entre autre de détecter les fonctions
+anormalement longues.
 
 \begin{figure}[ht]
 \begin{center}
 \includegraphics[width=18cm]{pictures/gprof2dot}
 \end{center}
-\label{fig:elf}
+\label{fig:gprof}
 \caption{Exemple de graphe d'appel résultant de l'exécution de GProf}
 \end{figure}
-
-
 
 \subsection{Mesurer la complexité d'un source: pmccabe}
 
 \paragraph{}
 comme vu précédment,    compte  tenu    que   l'effort     de test    peut être
 particulièrement couteux, il est intéressant de savoir à l'avance quel
-va être le futur  cout des  tests et  quel   sera à terme le  cout  de
-maintenance  du  logiciel  .   En  effet,  dans les grands  programmes
-industriels ou   les durées  de  vie   des systèmes   sont  importants
+va être le coût futur de la rédaction des  tests et par la même occasion le  cout  de
+maintenance  du  logiciel.   En  effet,  dans les grands  programmes
+industriels, où   les durées  de  vie   des systèmes   sont  importants
 (nucléaire,aéronautique), est-il possible  d'élaborer un ou  plusieurs
-critères  permettant de définir   le caractère {\it complexe} du  logiciel ? 
-Cette question est d'autant plus cruciale  que selon la réponse, d'une
-part l'effort de test   va être important,  d'autre part  l'effort  de
-maintenance  serra élevé.  C'est la  que se positionne l'outil pmccabe
+critères  permettant de définir  le caractère {\it complexe} du  logiciel ? 
+Cette question est d'autant plus cruciale  que selon la réponse, l'effort de test peut être être
+plus important et l'effort  de maintenance plus élevé.
+
+\paragraph{}
+FIXME CONTINUE BELOW !!!
+
+\paragraph{}
+C'est la  que se positionne l'outil pmccabe
 du nom de  George P. MacCabe, professeur de statistique de l'université
 de Purdue University aux Etats Unis.\\
 
