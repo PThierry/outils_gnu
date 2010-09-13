@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:08:07 2010 Philippe THIERRY
-%% Last update lun. 13 sept. 2010 09:38:58 CEST Philippe THIERRY
+%% Last update lun. 13 sept. 2010 22:27:16 CEST Philippe THIERRY
 %%
 
 \chapter{Les outils de test et de profiling des applicatifs}
@@ -98,10 +98,20 @@ d'entre eux, de définir, par bloc fonctionnel, quel sous ensemble du code du log
 testé.\\
 Gcov ne nécessite pas de construire un système de tests automatiques, mais c'est cependant
 fortement conseillé, car cela accélère grandement la vérification, au vue du nombre parfois grand
-de logiciels de test. De plus, cela fournit un cadre formel à l'exécution des tests.
+de logiciels de test. De plus, cela fournit un cadre formel à l'exécution des tests.\\
+Le schéma \ref{fig:gcov} montre un exemple de résultat de taux de couverture sur du code C. Il
+est indiqué pour chaque ligne le nombre d'exécutions effectuées. Les lignes n'ayant pas été
+exécutées sont indiquées en rouge.
 
-\paragraph{}
-FIXME: intégrer un histogramme lcov
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=6cm]{pictures/lcov}
+\end{center}
+\label{fig:gcov}
+\caption{Taux de couverture par ligne de code avec Gcov}
+\end{figure}
+
+
 
 \paragraph{}
 Sous réserve de faire quelques efforts supplémentaires afin d'intégrer cet  outillage dans
@@ -129,7 +139,9 @@ anormalement longues.
 
 \begin{figure}[ht]
 \begin{center}
+\begin{changemargin}{-1cm}{1cm}
 \includegraphics[width=18cm]{pictures/gprof2dot}
+\end{changemargin}
 \end{center}
 \label{fig:gprof}
 \caption{Exemple de graphe d'appel résultant de l'exécution de GProf}
@@ -140,34 +152,39 @@ anormalement longues.
 \paragraph{}
 comme vu précédment,    compte  tenu    que   l'effort     de test    peut être
 particulièrement couteux, il est intéressant de savoir à l'avance quel
-va être le coût futur de la rédaction des  tests et par la même occasion le  cout  de
+va être le coût futur de la rédaction des  tests et par la même occasion le  coût  de
 maintenance  du  logiciel.   En  effet,  dans les grands  programmes
-industriels, où   les durées  de  vie   des systèmes   sont  importants
+industriels où   les durées  de  vie   des systèmes   sont  importants
 (nucléaire,aéronautique), est-il possible  d'élaborer un ou  plusieurs
 critères  permettant de définir  le caractère {\it complexe} du  logiciel ? 
 Cette question est d'autant plus cruciale  que selon la réponse, l'effort de test peut être être
 plus important et l'effort  de maintenance plus élevé.
 
 \paragraph{}
-FIXME CONTINUE BELOW !!!
+C'est à cette question que répond l'outil pmccabe, créé par George P. MacCabe, professeur
+de statistique de l'université de Purdue University aux Etats Unis, dans le cadre de
+sa thèse de statistiques appliquées à l'informatique.\\
 
 \paragraph{}
-C'est la  que se positionne l'outil pmccabe
-du nom de  George P. MacCabe, professeur de statistique de l'université
-de Purdue University aux Etats Unis.\\
-
-\paragraph{}
-Il  s'agit de définir  un indice de complexité compris
-entre 1  et  un  nombre important  .   Cet  indice  s'appel complexité
-cyclomatique (ou VG),  il caractérise la  complexité d'un logiciel, et
-par  voie   de  conséquence  va   contribuer  très  fortement   tant à
-l"élaboration du  coût du test qu'à  celui de la pahse de maintenance.
-A titre   d'information,  on considère  qu'une   personne normale peut
-comprendre un logiciel dont le VG est $\le 9$.  L'outil pmmcabe fourni les
-résultats du VG  pour un logiciel donné.  Il  faut savoir que certains
-programmes   critiques mettent  la tenue  d'un   VG  $\le 9$  comme donnèe
-d'entrée ET   clé de paiement  , en  d'autre terme, le  fournisseur de
-logiciel n'est pas payé tant que le VG < 9 !
+Cet outil définit un indice de complexité appartenant à l'ensemble des entiers positifs non nuls.
+Cet  indice  s'appelle {\it complexité cyclomatique}.  Il caractérise, pour un bloc de code donné,
+la complexité associée. Cela permet ainsi de définir une valeur cyclomatique pour une fonction, et
+dans le cadre d'un projet complet une valeur cyclomatique moyenne.\\
+Plus la valeur cyclomatique est élevée, plus la complexité associée est grande. Des éléments
+entrant en ligne de compte dans l'accroissement de la valeur cyclomatiques sont le nombre de branchements,
+ou encore le nombre de sortie possible d'un bloc. En effet, plus leur nombre augmentent, plus le
+nombre de chemins d'exécution augmentent, et plus le comportement du bloc devient complexe. Une
+conséquence directe est le nombre de fichiers de tests nécessaire pour vérifier les différents
+chemins d'exécution possible du bloc.\\
+En étudiant la plupart des logiciels open-source, on tombe régulièrement sur une valeur moyenne du
+nombre cyclomatique d'environ 30, avec un certain nombre de fonctions pouvant atteindre 250 ou plus.
+A titre   d'information,  on considère  qu'une   personne normale peut comprendre un logiciel
+dont le nombre cyclomatique est inférieur à 9.\\
+Dans certains projets industriels, l'exigence de valeur cyclomatique inférieure à 9 peut être
+demandée. Dans certains projets très critiques, il peut être demandé une valeur cyclomatique ne
+dépassant pas 6. Le meilleur moyen de ce rendre compte de ce que cela veut dire est de tester
+l'outil sur quelques fonctions, afin de comprendre à quel point il peut être complexe de respecter
+cette exigence.
 
 \section{Validation de la configuration mémoire et de l'emploi des caches}
 
@@ -181,7 +198,7 @@ libc par ces propres fonctions. Ceci permet, de manière transparente, de détecte
 comme :
 \begin{itemize}
 \item La consommation mémoire lors d'une exécution donnée
-\item Le nombre d'allocation et de désallocation de mémoire
+\item Le nombre d'allocations et de désallocations de mémoire
 \item Les buffers overflows
 \item Les fuites mémoire
 \end{itemize}
@@ -193,15 +210,15 @@ Cachegrind est un programme de la famille de Valgrind, mais qui se concentre sur
 cache de données. Il prend un programme en argument et fournit, pour une exécution donnée de
 celui-ci, la consommation du cache de donnée, le taux de cache-hits et de cache-miss, et d'autres
 éléments d'information liés aux caches.\\
-Cachegrind implémente un simulateur d'algorithme de cache de type LRU avec un cache à deux niveaux.
+Cachegrind implémente un simulateur d'algorithmes de caches de type LRU avec un cache à deux niveaux.
 C'est d'ailleurs sa faiblesse : peu d'algorithmes de caches sont implémentés. C'est cependant une
 base très intéressante pour définir le profil de consommation de cache d'un programme.
 
 \subsection{Mesurer la lourdeur d'un projet: sloccount}
 
 \paragraph{}
-Le programme {\it sloccount} est un binaire fournissant des données de métrologies sur les sources
-d'un projet. Il fournit le nombre de ligne de code détectées dans un fichier ou un répertoire, par
+Le programme {\it sloccount} est un binaire fournissant des données de métrologie sur les sources
+d'un projet. Il fournit le nombre de lignes de code détectées dans un fichier ou un répertoire, par
 langage. Il fournit également le coût théorique de l'implémentation du projet, en heures et en
 dollars, à partir du nombre de lignes de code trouvées.
 
@@ -209,6 +226,6 @@ dollars, à partir du nombre de lignes de code trouvées.
 
 \paragraph{}
 Il existe un grand nombre de projets fournissant des informations utiles tant au développeur qu'à
-l'intégrateur. Ils sont peu employés par la communauté mais ont une réelle valeur ajouté dans le
-cadre de systèmes industriels. Tous ces outils contribuent un métier : le génie logiciel
+l'intégrateur. Ils sont peu employés par la communauté mais ont une réelle valeur ajoutée dans le
+cadre de systèmes industriels. Tous ces outils contribuent un métier : le génie logiciel.
 
