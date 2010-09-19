@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  mer. 01 sept. 2010 20:29:25 CEST Philippe THIERRY
-%% Last update dim. 12 sept. 2010 10:49:33 CEST Philippe THIERRY
+%% Last update sam. 18 sept. 2010 11:42:45 CEST Philippe THIERRY
 %%
 
 \chapter{Structure des sources}
@@ -18,15 +18,17 @@ importants.}
 
 \paragraph{}
 L'architecture des sources d'un logiciel est souvent complexe, et on y retrouve un grand nombre
-de fichiers. La plupart du temps, les logiciels open-source sont fait avec le couple Makefile/autotools.
+de fichiers. La plupart du temps, les logiciels open-source sont produits avec le couple Makefile/autotools.
 Ces deux outils de production sont décrit tout au long de ce document.
 
 \paragraph{}
 Lorsque l'on télécharge les sources d'un logiciel, que ce soit via un utilitaire de gestion de
 configuration (subversion, git, mercurial...) ou directement sous forme d'une archive tar, on
-retrouve en général un contenu assez similaire à l'arborescence ci-dessous:
+retrouve en général un contenu assez similaire à l'arborescence \ref{lst:src_dir}.\\
+Dans ce schéma, {\tt [d]} signifie qu'il s'agit d'un répertoire, {\tt f} d'un fichier. La présence
+d'une étoile ({\tt *}) devant le nom du fichier indique qu'il est exécutable. 
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Contenu générique d'un projet source},label={lst:src_dir}]
 [d] doc
 [d] src
 [d] test
@@ -64,7 +66,7 @@ fichiers et dossiers principaux:
 \begin{minipage}{0.8\linewidth}
 \vspace{2mm}
 Ce fichier contient les spécifications pour la configuration des sources. Il permet de générer
-le script shell {\texttt configure}. Il sera décrit plus précisément dans le chapitre \ref{chap:autotools}.
+le script shell {\tt configure}. Il sera décrit plus précisément dans le chapitre \ref{chap:autotools}.
 \vspace{2mm}
 \end{minipage}
 \\
@@ -109,8 +111,10 @@ autoreconf, reconstruisant le fichier {\tt configure} à partir du fichier {\tt c
 \textbf{doc} &
 \begin{minipage}{0.8\linewidth}
 \vspace{2mm}
-Par convention, contient les documents associés au projet. Ces documents sont en général générés (fait
-en \LaTeX, ou encore construit à partir de commentaire Doxygen).
+Par convention, contient les documents associés au projet. Ces documents sont en général générés
+car rédigés dans le langage \LaTeX, ou encore construits à partir des commentaires au format
+Doxygen\footnote{méta-langage pour rédiger les commentaires dans les sources, permettant de génerer
+automatiquement des documents d'architecture logicielle}.
 \vspace{2mm}
 \end{minipage}
 \\

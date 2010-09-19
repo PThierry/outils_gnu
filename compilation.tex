@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:18 2010 Philippe THIERRY
-%% Last update dim. 12 sept. 2010 11:24:21 CEST Philippe THIERRY
+%% Last update sam. 18 sept. 2010 11:36:07 CEST Philippe THIERRY
 %%
 
 \chapter{La chaîne de compilation}
@@ -27,7 +27,7 @@ La   construction   d'un   binaire   se   fait   en   plusieurs    étapes    bie
 appels aux macros (déclaré au travers de l'instruction de preprocessing \texttt{\#define}) par le contenu de la macro.\\
 Il en va de même pour l'inclusion des header, en prenant en  compte  des  problématiques  de  redondance  d'inclusion.
 
-\item Construire les fichiers objets.\\Un fichier objet est créé  par  source.   Dans  ce  fichier
+\item Construire les fichiers objets.\\Un fichier objet est créé à partir de la compilation d'un fichier source. Dans  ce  fichier
 sont  déclarés  les différents symboles utilisés et définis dans le fichier source associé.  On y retrouve ainsi la
 liste  des  fonctions implémentées et celles qui sont utilisées et non encore définies (comme celles implémentées dans
 un autre fichier source et accessible via un header). Il en va de même pour les variables globales, les structures de
@@ -39,8 +39,9 @@ objet utilisés pour construire la bibliothèque.  Cette étape n'est pas toujours 
 
 \item Le linkage.\\Une fois les fichiers objets et les bibliothèques construits, il s'agit d'en faire un tout cohérent.
 On construit alors une table définissant les différentes sections du binaire (partie code, partie
-data, rodata,  etc.), on résout les symboles inconnus venant des bibliothèques tierces comme  la  libc,  et  on  construit
-les méta-données du binaire (format ELF32 sur un Linux 32bits, ELF64 sur un  linux  64  bits).   Ces
+{\tt data}, {\tt rodata},  etc.), on résout les symboles inconnus venant des bibliothèques tierces comme  la  libc,
+et  on  construit les méta-données\footnote{Ensemble des informations sur le contenu du binaire,
+permettant de le manipuler} du binaire (format ELF32 sur un Linux 32bits, ELF64 sur un  linux  64  bits).   Ces
 méta-données seront utilisées par le noyau lors de la création du processus, pour déployer en mémoire  les  différents
 éléments du binaire,  et  pour  pouvoir amorcer son exécution.
 \end{enumerate}

@@ -1,0 +1,189 @@
+%%
+%%
+%% anx_latex.tex for  in cours/outils_gnu
+%%
+%% Made by Philippe THIERRY
+%% Login   <Philippe THIERRYreseau-libre.net>
+%%
+%% Started on  sam. 18 sept. 2010 11:43:34 CEST Philippe THIERRY
+%% Last update sam. 18 sept. 2010 11:50:40 CEST Philippe THIERRY
+%%
+
+\chapter{Exemple de documentation logicielle rédigée en \LaTeX}
+
+\paragraph{}
+Le script \ref{lst:latex_example} est un exemple (réel) de documentation \LaTeX d'un projet Open-Source.
+
+\begin{lstlisting}[caption={Documentation logicielle type rédigée en \LaTeX},label=lst:latex_example]
+%%
+%%
+%% requirements.tex for libcommon in libcommon/doc/latex/includes
+%%
+%% Made by phil
+%% Login   <philreseau-libre.net>
+%%
+%% Started on  mer. 09 sept. 2009 23:05:40 CEST phil
+%% Last update mer. 02 juin 2010 19:58:56 CEST Philippe THIERRY
+%%
+\documentclass[a4paper]{book}
+\usepackage{a4wide}
+\usepackage[Lenny]{fncychap}
+\usepackage{makeidx}
+\usepackage{fancyhdr}
+\usepackage[dvips]{graphicx}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{alltt}
+\usepackage{times}
+\usepackage{ifpdf}
+\usepackage{lastpage}
+%\usepackage{calc}
+\usepackage{datetime}
+\usepackage{chngpage}
+\usepackage{tabularx}
+\usepackage{listings}
+
+\usepackage{styles/macros}
+
+\usepackage{styles/requirement}
+\usepackage[toc,page]{appendix}
+\usepackage{color}
+\usepackage[hundred]{vrsion}
+\ifpdf
+\usepackage[pdftex,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue
+           ]{hyperref}
+\else
+\usepackage[ps2pdf,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue
+           ]{hyperref}
+\usepackage{pspicture}
+\fi
+
+\usepackage{titlesec}
+
+% charts support
+\usepackage{pdftricks}
+\begin{psinputs}
+  \usepackage{pstricks}
+  \usepackage{multido}
+  \usepackage{epsfig}
+  \usepackage{pst-grad} % For gradients
+  \usepackage{pst-plot} % For axes
+\end{psinputs}
+
+% Add a background picture to first page
+\usepackage{eso-pic}
+% coloration of section and subsection titiles
+\definecolor{seccol}{rgb}{0.8,0,0}
+\definecolor{subseccol}{rgb}{0,0,0.7}
+
+\titleformat{\section}
+{\color{seccol}\normalfont\Large\bfseries}{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\color{subseccol}\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+\makeindex
+\setcounter{tocdepth}{1}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% add code support
+\definecolor{colKeys}{rgb}{0,0,1}
+\definecolor{colIdentifier}{rgb}{0,0,0}
+\definecolor{colComments}{rgb}{0,0.5,1}
+\definecolor{colString}{rgb}{0.6,0.1,0.1}
+\definecolor{colList}{rgb}{0.9,0.9,0.9}
+
+%%%% debut macro %%%%
+\newenvironment{changemargin}[2]{\begin{list}{}{%
+\addtolength{\leftmargin}{#1}%
+\addtolength{\rightmargin}{#2}%
+}\item }{\end{list}}
+%%%% fin macro %%%%
+
+\renewcommand{\chaptermark}[1]{%
+\markboth{\MakeUppercase{%
+\thechapter. #1}}{}}
+
+\definecolor{mail}{rgb}{1,0,0}
+
+% update table of contents depth
+\setcounter{tocdepth}{3} % Dans la table des matieres
+\setcounter{secnumdepth}{3} % Avec un numero.
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\input{share/titlepage.tex}
+
+\begin{document}
+% Declare ref counter. This counter is used to increment the [ REF X ]
+% values, for successive elements defined as a reference
+\newcounter{ref}
+\stepcounter{ref}
+
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Generate the titlepage background using given picture
+\AddToShipoutPicture*{\BackgroundPic{share/img/libcommon-background.png}}
+\libcommontitle{the requirements cookbook}{0.98.8}
+
+\cleardoublepage
+\renewcommand{\headrulewidth}{0.5pt}
+\fancyhf{}
+\pagestyle{fancy}
+\renewcommand{\footrulewidth}{1pt}
+\fancyhead[LO]{\uppercase{\leftmark}}
+\fancyhead[RO]{\rightmark}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RE]{\rightmark}
+\fancyfoot[LE]{\thepage/\pageref{LastPage}}
+\fancyfoot[RO]{\thepage/\pageref{LastPage}}
+\fancyfoot[C]{libcommon v.0.98.8 - generated on September, 15 2010}
+\pagenumbering{roman}
+\tableofcontents
+\cleardoublepage
+\listoffigures
+\cleardoublepage
+\pagenumbering{arabic}
+
+\begin{minipage}{0.8\linewidth}
+\vspace{2cm}
+{\Huge Abstract\\}
+\vspace{2cm}
+{
+\paragraph{}
+\it
+This document describes all the input requirements of the libcommon project.\\
+This document is in compliance with the DO178B-DAL C, presenting the system
+requirements\footnote{see The DO-178B description, part {\it system
+requirements}}. This document is the concatenation of all the specialized
+design \& requirements documents.
+}
+\end{minipage}
+\newpage
+
+\input{introduction.tex}
+
+% code quality
+\input{code_quality.tex}
+% software architecture
+\input{software_architecture.tex}
+% software production
+\input{software_production.tex}
+% code quality
+\input{software_test.tex}
+% software documentation
+\input{software_documentation.tex}
+
+\printindex
+\end{document}
+\end{lstlisting}
