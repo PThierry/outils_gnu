@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:52 2010 Philippe THIERRY
-%% Last update dim. 12 sept. 2010 12:14:39 CEST Philippe THIERRY
+%% Last update Wed Sep 22 14:01:43 2010 Philippe THIERRY
 %%
 
 \chapter{Les outils de configurations des sources}
@@ -49,6 +49,18 @@ type {\tt file not found} et renverra une erreur, pas forcément simple à lire.
 \section{Les limites de la configuration : problématique de la cross-compilation}
 
 \paragraph{}
+Il arrive fréquement qu'un projet source puisse être produit pour différentes architectures
+matérielles. Cependant, on ne produit pas toujours un logiciel directement sur l'architecture
+matérielle cible, la plupart du temps car les outils de production ne sont pas présents sur cette
+architecture. Afin de simplifier le travail du mainteneur de l'applicatif, il existe des {\it
+chaînes de cross-compilation}. Il s'agit de chaînes de compilation dont le but est de produire un
+binaire non pas pour l'architecture sur laquelle elles s'exécutent mais pour une autre architecture
+pour laquelle elles ont été faites. Ainsi, sur un PC de bureau (de type x86) il est possible de
+produire des binaires pour du SPARC, de l'ARM, du MIPS, ou divers autres architectures. Ce type de
+production est appellée {\it cross compilation}. Construire le système de production d'un logiciel
+pour pouvoir supporter la cross-compilation nécessite quelques restrictions.
+
+\paragraph{}
 Le système de configuration est capable de fournir un grand nombre d'informations. Le tableau
 \ref{tab:config_info} donne une liste d'éléments que ce dernier peut fournir en entrée de la
 production.
@@ -67,7 +79,7 @@ La taille d'un integer, d'un long, d'un double, d'un pointeur \\
 \hline
 La présence de divers headers du langage de programmation du projet \\
 \hline
-Pour une bibliothèque donnée, la présence de diverses fonctions du langage de programation du projet \\
+Pour une bibliothèque donnée, la présence de diverses fonctions du langage de programmation du projet \\
 \hline
 La présence de tout binaire demandé \\
 \hline
@@ -82,14 +94,15 @@ des éléments de configuration pour la production et l'installation du binaire (e
 
 \paragraph{}
 Parmi toutes les capacités du système de configuration, certaines ne sont pas nécessairement bonnes
-à utiliser. C'est entre autre le cas des informations sur la taille en octets des types numériques.\\
-En effet, lorsque l'on fait de la cross-compilation, c'est en général sur une plateforme donnée pour une
+à utiliser. C'est entre autre le cas des informations sur la taille en octets des types ({\tt int},
+{\tt long}, {\tt short}...).\\
+En effet, lorsque l'on fait de la cross-compilation, c'est en général sur une plate-forme donnée pour une
 autre. Par exemple, on cross-compile sur une architecture Intel IA32 pour un processeur ARM.
 
 \paragraph{}
-Lorsque le système de production récupère les informations sur les tailles de type, il le fait sur
-la plateforme locale, non sur la plateforme cible. Il n'a d'ailleurs aucune possibilité de
-connaître,  au moment de la compilation, les propriétés de la plateforme cible. Ainsi, on considère
+Lorsque le système de production récupère les informations sur les tailles des type de données, il le fait sur
+la plate-forme locale, non sur la plate-forme cible. Il n'a d'ailleurs aucune possibilité de
+connaître,  au moment de la compilation, les propriétés de la plate-forme cible. Ainsi, on considère
 qu'un système de configuration des sources ne doit aider que pour vérifier les éléments nécessaires à
 la production, en aucun cas à l'exécution. On va donc vérifier la présence des différents binaires,
 headers et fonctions nécessaires à la compilation, et on laissera au développeur le soin

@@ -6,13 +6,32 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  mer. 01 sept. 2010 21:30:33 CEST Philippe THIERRY
-%% Last update Thu Sep  9 12:12:37 2010 Philippe THIERRY
+%% Last update Wed Sep 22 14:20:20 2010 Philippe THIERRY
 %%
 
 \chapter{Sortie du traitement du préprocesseur}
 
-Comme vu dans le Chapitre \ref{preproc}, le fichier résultant du traitement du préprocessing est volumineux. En voici le contenu :
+\paragraph{}
+Comme vu dans le Chapitre \ref{preproc}, le fichier résultant du traitement du préprocessing est volumineux.
+Ce dernier est auto-suffisant en terme d'inclusion. Ainsi, l'ensemble des fichiers d'en-tête qui
+ont été intégrés au fichier source de manière directe ou indirecte sont présents dans ce fichier.
+
+\paragraph{}
+Les lignes commençant par des dièses sont des lignes informatives, précisant le numéro de ligne et
+le fichier source nécessitant un traitement par le préprocesseur.
+
+\paragraph{}
+La ligne suivante indique qu'à la ligne 27 du fichier example\_cpp.c un traitement par le
+préprocesseur est nécessaire.
 \begin{lstlisting}
+# 27 "example_cpp.c"
+\end{lstlisting}
+Il s'agit dans le fichier source de la ligne d'inclusion du fichier {\tt stdio.h}. En conséquence,
+le contenu de stdio.h remplace la ligne 27. Sont alors traités, de manière récursive, les éléments
+de preprocessing présent dans le contenu de {\tt stdio.h}, en employant les même lignes informatives.
+
+En voici le contenu :
+\begin{lstlisting}[caption={Résultat du traitement du préprocesseur},label=lst:preproc_output]
 # 1 "example_cpp.c"
 # 1 "<built-in>"
 # 1 "<command-line>"

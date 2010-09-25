@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:18 2010 Philippe THIERRY
-%% Last update sam. 18 sept. 2010 11:36:07 CEST Philippe THIERRY
+%% Last update Wed Sep 22 13:46:06 2010 Philippe THIERRY
 %%
 
 \chapter{La chaîne de compilation}
@@ -75,13 +75,13 @@ Soit le fichier source C suivant :
 \begin{lstlisting}[caption={Premier example de code}, label=code_cpp]
 #include <stdio.h>
 
-#define VALUE   12
+#define OFFSET   12
 
 int foo(char    *bar);
 
 int foo(char    *bar)
 {
-  bar += VALUE;
+  bar += OFFSET;
   return 0;
 }
 \end{lstlisting}
@@ -256,9 +256,10 @@ char    ma_version="version 1.0.2rc3";
 \end{itemize}
 
 \paragraph{}
-Les sections qui ne figurent pas dans un binaire sont les sections {\it dynamiques}. Il s'agit du tas (heap) et de
-la pile (stack). En effet, ces sections n'ont de sens que durant l'exécution du binaire, car sont
-construites au travers   de   l'exécution   du   code.    Ces   sections   sont   le   propre    d'un    processus.
+Les sections qui ne figurent pas dans un binaire sont les sections {\it dynamiques}, construites du
+fait de l'exécution du logiciel. Il s'agit du tas (heap) et de la pile (stack). Ces   sections
+sont spécifiques au processus\footnote{Un processus est une tache {\it en cours d'exécution}, à
+l'inverse d'un exécutable, qui n'est qu'un fichier}.
 
 \paragraph{}
 Lors du linkage, on ne retrouve plus qu'une seule section de code (section .text). Elle regroupe l'ensemble des
@@ -354,8 +355,8 @@ Option & Signification \\
 {\textbf{-W}} &
         \begin{minipage}{0.7\linewidth}
         \vspace{2mm}
-        Cette option demande au compilateur d'afficher les warnings les plus fréquent. Cette option ne fait
-        qu'afficher à l'erreur l'élément de programmation hasardeux dans les cas  les  plus  graves.
+        Cette option demande au compilateur d'afficher les warnings les plus fréquents. Cette option ne fait
+        qu'afficher sur la sortie d'erreur ({\tt stderr}) les élément de programmation hasardeux les  plus  graves.
         \vspace{2mm}
         \end{minipage}\\
         \hline
@@ -460,7 +461,8 @@ Option & Signification \\
         \begin{minipage}{0.7\linewidth}
         Informe le linker que le logiciel à linker s'appuie sur une bibliothèque extérieure au logiciel. Cette option
         est implicite pour la libc, mais doit être fournie pour toutes les autres bibliothèques. Seul le nom de la
-        bibliothèque,   sans   le   prefixe   {\it   lib}   doit   être   fourni.     Exemple    :\\
+        bibliothèque,   sans   le   prefixe   {\it   lib}   doit   être   fourni.     Voici un
+        exemple avec la libgtk (bibliothèque graphique sur laquelle se base le bureau Gnome) :\\
         \begin{lstlisting}
         gcc -o foo -lgtk foo.c
         \end{lstlisting}

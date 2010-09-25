@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:08:07 2010 Philippe THIERRY
-%% Last update lun. 13 sept. 2010 22:27:16 CEST Philippe THIERRY
+%% Last update Wed Sep 22 14:10:00 2010 Philippe THIERRY
 %%
 
 \chapter{Les outils de test et de profiling des applicatifs}
@@ -15,7 +15,8 @@
 {\it Ce chapitre décrit les différents logiciels qui permettent de valider
 le comportement de l'élément produit. Il décrit comment, dans le domaine
 industriel, sont considérés les outils et mesures de validation et de
-profiling.\\
+profiling (étude du profil d'exécution d'une tache, en terme d'appel de fonctions,
+de consommation mémoire, etc).\\
 Ces méthodes de durcissement du logiciel sont très importantes dans les
 domaines de l'embarqué critique, du temps réel ou encore de la sécurité
 car ils sont à l'origine de la qualité logicielle.}
@@ -118,7 +119,7 @@ Sous réserve de faire quelques efforts supplémentaires afin d'intégrer cet  outi
 le Makefile, on se  rapproche de  plus en  plus d'outillages industriels  comparables à
 ceux de l'industrie automobile par exemple.\\
 Les éléments que fournit gcov permettent de savoir si l'implémentation des campagnes de test sont
-compatibles des exigences d'entrée du logiciel. Ces dernières sont souvent définies sous forme d'un
+compatibles avec les exigences d'entrée du logiciel. Ces dernières sont souvent définies sous forme d'un
 taux de couverture (en pourcentage). Le schéma précédent permet ainsi de savoir quand ce taux est
 atteint. En effet, faire plus de tests que demandé implique un surcoût qu'il est préférable
 d'éviter afin de respecter le devis initial.
@@ -126,13 +127,13 @@ d'éviter afin de respecter le devis initial.
 \section{Définition du profil d'exécution avec Gprof}
 
 \paragraph{}
-Au travers de l'exécution des logiciels de test il peut être  intérresant
+Au travers de l'exécution des logiciels de test il peut être  intéressant
 de vérifier  le comportement temporel des fonctions testées  en terme de boucles
 et d'appel de  fonctions.  C'est le rôle de  l'outil {\texttt gprof}\index{Gprof}
 qui à  l'instar de {\texttt gcov} va permettre de fournir des graphes permettant
 d'analyser le bon comportement de ces dernières. Il est de plus possible de mesurer le comportement
 du logiciel lui même en simulant un environnement d'exécution représentatif du besoin.\\
-Le schéma \ref{fig:gprof} montre un arbre d'exécution d'un logiciel complet. Il indique l'abre
+Le schéma \ref{fig:gprof} montre un arbre d'exécution d'un logiciel complet. Il indique l'arbre
 d'appel des différentes fonctions, ainsi que pour chacune, le nombre d'appels et le coût relatif à
 la durée d'exécution de chaque fonction. Cela permet entre autre de détecter les fonctions
 anormalement longues.
@@ -140,18 +141,18 @@ anormalement longues.
 \begin{figure}[ht]
 \begin{center}
 \begin{changemargin}{-1cm}{1cm}
-\includegraphics[width=18cm]{pictures/gprof2dot}
+\includegraphics[width=18cm]{pictures/gprof_simple}
 \end{changemargin}
 \end{center}
 \label{fig:gprof}
-\caption{Exemple de graphe d'appel résultant de l'exécution de GProf}
+\caption{Exemple de graphe d'appel de fonctions résultant de l'exécution de GProf}
 \end{figure}
 
 \subsection{Mesurer la complexité d'un source: pmccabe}
 
 \paragraph{}
-comme vu précédment,    compte  tenu    que   l'effort     de test    peut être
-particulièrement couteux, il est intéressant de savoir à l'avance quel
+comme vu précédemment,    compte  tenu    que   l'effort     de test    peut être
+particulièrement coûteux, il est intéressant de savoir à l'avance quel
 va être le coût futur de la rédaction des  tests et par la même occasion le  coût  de
 maintenance  du  logiciel.   En  effet,  dans les grands  programmes
 industriels où   les durées  de  vie   des systèmes   sont  importants
@@ -172,8 +173,8 @@ la complexité associée. Cela permet ainsi de définir une valeur cyclomatique pou
 dans le cadre d'un projet complet une valeur cyclomatique moyenne.\\
 Plus la valeur cyclomatique est élevée, plus la complexité associée est grande. Des éléments
 entrant en ligne de compte dans l'accroissement de la valeur cyclomatiques sont le nombre de branchements,
-ou encore le nombre de sortie possible d'un bloc. En effet, plus leur nombre augmentent, plus le
-nombre de chemins d'exécution augmentent, et plus le comportement du bloc devient complexe. Une
+ou encore le nombre de sortie possible d'un bloc. En effet, plus leur nombre augmente, plus le
+nombre de chemins d'exécution augmente, et plus le comportement du bloc devient complexe. Une
 conséquence directe est le nombre de fichiers de tests nécessaire pour vérifier les différents
 chemins d'exécution possible du bloc.\\
 En étudiant la plupart des logiciels open-source, on tombe régulièrement sur une valeur moyenne du
@@ -210,7 +211,8 @@ Cachegrind est un programme de la famille de Valgrind, mais qui se concentre sur
 cache de données. Il prend un programme en argument et fournit, pour une exécution donnée de
 celui-ci, la consommation du cache de donnée, le taux de cache-hits et de cache-miss, et d'autres
 éléments d'information liés aux caches.\\
-Cachegrind implémente un simulateur d'algorithmes de caches de type LRU avec un cache à deux niveaux.
+Cachegrind implémente un simulateur d'algorithmes de caches de type LRU\footnote{{\it Least Recently
+Used}, remplace la ligne de cache la moins souvent utilisée} avec un cache à deux niveaux.
 C'est d'ailleurs sa faiblesse : peu d'algorithmes de caches sont implémentés. C'est cependant une
 base très intéressante pour définir le profil de consommation de cache d'un programme.
 

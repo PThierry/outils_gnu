@@ -6,7 +6,7 @@
 %% Login   <Philippe THIERRYreseau-libre.net>
 %%
 %% Started on  Wed Sep  1 18:07:34 2010 Philippe THIERRY
-%% Last update dim. 12 sept. 2010 11:44:36 CEST Philippe THIERRY
+%% Last update Wed Sep 22 13:52:36 2010 Philippe THIERRY
 %%
 
 \chapter{La commande GNU Make}
@@ -43,7 +43,7 @@ même nom.\\
 Cette cible est appellable comme argument de la commande {\tt make}, impliquant l'exécution de
 la cible demandée :
 \begin{lstlisting}[caption={Appeler une cible spécifique dans un Makefile},label=lst:call_target]
-sh$ make -j 2 ma_cible
+sh$ make ma_cible
 \end{lstlisting}
 
 \paragraph{}
@@ -136,7 +136,12 @@ DATE = $(date +"%d-%M-%Y")
 \paragraph{}
 Il existe des structures de contrôle dans le langage des Makefiles. Elles permettent de ne
 faire prendre en compte, par l'outil {\tt make}, qu'une partie du Makefile en fonction de la valeur
-d'une donnée. Cela permet, par exemple, de faire dépendre un traitement d'un élément extérieur.
+d'une donnée. Cela permet, par exemple, de faire dépendre un traitement d'un élément extérieur.\\
+Le script \ref{lst:mak_ctrl} contient une structure de contrôle s'appuyant sur la présence ou non
+de la variable d'environnement {\tt MORE\_CFLAGS}. Si cette variable est présente dans
+l'environnement d'exécution et possède la valeur {\tt 1}, alors {\tt make} entre dans la structure
+de contrôle {\tt ifeq}. A l'inverse, si cette variable n'est pas présente ou ne vaut pas {\tt 1},
+la structure de contrôle est ignorée.
 
 \begin{lstlisting}[caption=Les structures de contrôles des Makefiles,label=lst:mak_ctrl]
 CFLAGS=-W -ggdb
@@ -154,10 +159,12 @@ compile:
 Le script \ref{lst:mak_ctrl} peut donc générer deux appels au compilateur. Un appel classique à
 {\tt make compile} exécute la commande suivante :\\
 \begin{lstlisting}
+$ make
 gcc -W -ggdb my_file.c -o foo
 \end{lstlisting}
 à l'inverse, la commande {\tt MORE\_CFLAGS=1 make compile} exécute la commande suivante :
 \begin{lstlisting}
+$ MORE_CFLAGS=1 make 
 gcc -W -ggdb -Wall -Wextra -Werror my_fyle.c -o foo
 \end{lstlisting}
 
@@ -286,7 +293,7 @@ est régulièrement utilisée dans la rédaction des cibles de compilation.
 
 \paragraph{}
 Un autre élément très utile des Makefiles est l'aspect traitement de chaîne de caractère lors de la
-définition d'une variable, dont la syntaxe est ressemblante à celle du {\it bash}.\\
+définition d'une variable, dont la syntaxe est ressemblante à celle du shell {\it bash}.\\
 Ainsi, on peut, à partir d'une variable ayant une chaîne de caractère donnée, la modifier comme on
 le souhaite pour définir d'autres variables. Un exemple étant toujours mieux qu'un long discours,
 voici un exemple d'emploi permettant, pour une chaîne donnée, de remplacer une sous-chaîne par une
